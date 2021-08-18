@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.MealTypeDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.MealTypeEntity" id="mealTypeMap">
+        <result property="mealTypeId" column="meal_type_id"/>
+        <result property="mealTypeName" column="meal_type_name"/>
+        <result property="mealTypeValue" column="meal_type_value"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="sort" column="sort"/>
+        <result property="gymId" column="gym_id"/>
+        <result property="partnerId" column="partnerId"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <update id="deleteByDeleteFlag">
+        update tb_meal_type set delete_flag=1
+        where meal_type_id=#{id}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.CustomerShareDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.CustomerShareEntity" id="customerShareMap">
+        <result property="customerShareId" column="customer_share_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerAvatar" column="customer_avatar"/>
+        <result property="shareText" column="share_text"/>
+        <result property="shareTime" column="share_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.CustomerShareWithImagesDto" id="customerShareWithDetailMap">
+        <result property="customerShareId" column="customer_share_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerAvatar" column="customer_avatar"/>
+        <result property="shareText" column="share_text"/>
+        <result property="shareTime" column="share_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <collection property="customerShareImages" columnPrefix="csi_" javaType="string">
+            <result property="customerShareImage" column="customer_share_image"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="selectCustomerShares" resultMap="customerShareMap">
+        select cs.*,
+        c.name as customer_name,
+        c.avatar as customer_avatar
+        from tb_customer_share cs
+        left join tb_customer c
+        on c.customer_id=cs.customer_id
+        where cs.delete_flag=0
+        <if test="customerId != null">
+            and cs.customer_id = #{customerId}
+        </if>
+        <if test="customerName != null">
+            and c.name like concat('%',#{customerName},'%')
+        </if>
+        order by share_time desc
+    </select>
+
+    <select id="selectOneDetail" resultMap="customerShareWithDetailMap">
+        select cs.*,
+               csi.customer_share_image as csi_customer_share_image,
+               c.name as customer_name,
+               c.avatar as customer_avatar
+        from tb_customer_share cs
+                 left join tb_customer_share_image csi
+                           on cs.customer_share_id = csi.customer_share_id
+                 left join tb_customer c
+                           on c.customer_id=cs.customer_id
+        where cs.customer_share_id = #{id}
+          and cs.delete_flag = 0
+        order by share_time desc, csi.customer_share_image_id asc
+    </select>
+
+    <update id="deleteByDeleteFlag">
+        update tb_customer_share
+        set delete_flag=1
+        where customer_share_id = #{id}
+    </update>
+
+</mapper>

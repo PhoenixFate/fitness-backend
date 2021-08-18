@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.CustomerVipClassCheckinDao">
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.CustomerVipClassCheckinEntity"
+               id="customerVipCheckinMap">
+        <result property="id" column="id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="checkinTime" column="checkin_time"/>
+        <result property="classId" column="class_id"/>
+        <result property="trainerId" column="trainer_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="modify_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.CustomerVipClassCheckinDto"
+               id="customerVipCheckinDtoMap">
+        <result property="classId" column="class_id"/>
+        <result property="checkinTime" column="checkin_time"/>
+        <result property="trainerId" column="trainer_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <association property="coach" columnPrefix="t_"
+                     javaType="com.phoenix.fitness.modules.fitness.entity.CoachEntity">
+            <result property="coachId" column="coach_id"/>
+            <result property="coachName" column="coach_name"/>
+            <result property="mobile" column="mobile"/>
+            <result property="username" column="username"/>
+            <result property="gender" column="gender"/>
+            <result property="email" column="email"/>
+            <result property="identityCard" column="identity_card"/>
+            <result property="birthday" column="birthday"/>
+            <result property="avatar" column="avatar"/>
+            <result property="userId" column="user_id"/>
+            <result property="perClassPrice" column="per_class_price"/>
+        </association>
+        <association property="customer" columnPrefix="c_"
+                     javaType="com.phoenix.fitness.modules.fitness.entity.CustomerEntity">
+            <result property="customerId" column="customer_id"/>
+            <result property="name" column="name"/>
+            <result property="mobile" column="mobile"/>
+            <result property="gender" column="gender"/>
+            <result property="mail" column="mail"/>
+            <result property="birthday" column="birthday"/>
+            <result property="avatar" column="avatar"/>
+            <result property="coachId" column="coach_id"/>
+            <result property="gymId" column="gym_id"/>
+            <result property="userId" column="user_id"/>
+            <result property="customerNumber" column="customer_number"/>
+            <result property="isVip" column="is_vip"/>
+        </association>
+    </resultMap>
+
+    <select id="selectCheckinRecords" resultMap="customerVipCheckinDtoMap">
+        select ch.checkin_time as checkin_time,
+        ch.class_id as class_id,
+        t.coach_name as t_coach_name,
+        t.mobile as t_mobile,
+        t.gender as t_gender,
+        t.per_class_price as t_per_class_price,
+        ch.checkin_time as checkin_time,
+        c.name as c_name,
+        c.gym_id as c_gym_id,
+        c.customer_id as c_customer_id,
+        c.customer_number as c_customer_number,
+        c.name as c_customer_name,
+        c.mobile as c_mobile
+        from `coach-app`.customer_vip_class_checkin ch
+        left join `coach-app`.tb_customer c on c.customer_id = ch.customer_id
+        left join `coach-app`.tb_coach t on t.coach_id = ch.trainer_id
+        <include refid="filterRecords"/>
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+        <if test="offset != null">
+            OFFSET #{offset}
+        </if>
+    </select>
+
+    <select id="selectCheckinRecordsCount" resultType="long">
+        select count(1)
+        from `coach-app`.customer_vip_class_checkin ch
+        left join `coach-app`.tb_customer c on c.customer_id = ch.customer_id
+        left join `coach-app`.tb_coach t on t.coach_id = ch.trainer_id
+        <include refid="filterRecords"/>
+    </select>
+
+    <sql id="filterRecords">
+        <where>
+            <if test="name != null ">
+                and c.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="coachId != null ">
+                and ch.trainer_id = #{coachId}
+            </if>
+            <if test="startAt != null">
+                <![CDATA[
+            AND ch.`checkin_time` >= #{startAt}
+            ]]>
+            </if>
+            <if test="endAt != null">
+                <![CDATA[
+            AND ch.`checkin_time` <= #{endAt}
+            ]]>
+            </if>
+        </where>
+    </sql>
+
+</mapper>

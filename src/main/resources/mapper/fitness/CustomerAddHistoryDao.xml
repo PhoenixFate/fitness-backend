@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.CustomerAddHistoryDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.CustomerAddHistoryEntity" id="customerAddHistoryMap">
+        <result property="customerAddHistoryId" column="customer_add_history_id"/>
+        <result property="coachId" column="coach_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="addDate" column="add_date"/>
+        <result property="gymId" column="gym_id"/>
+        <result property="partnerId" column="partner_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <select id="selectCustomerCountPeriod" resultType="com.phoenix.fitness.modules.fitness.dto.CustomerCountDto">
+        select add_date as detailDate,
+               count(*) as customerCount
+        from tb_customer_add_history
+        where add_date >= #{startDate}
+          and add_date &lt;= #{endDate}
+        GROUP BY add_date
+    </select>
+
+</mapper>

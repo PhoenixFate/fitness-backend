@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.CustomerReturnVisitDao">
+
+    <select id="selectCustomerIds" resultType="Long">
+        select customer_id
+        from tb_customer_return_visit
+        GROUP BY customer_id
+    </select>
+
+
+</mapper>

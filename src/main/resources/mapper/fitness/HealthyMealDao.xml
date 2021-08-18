@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.HealthyMealDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.HealthyMealWithItemsDto" id="healthyMealWithDetailMap">
+        <result property="healthyMealId" column="healthy_meal_id"/>
+        <result property="healthyMealName" column="healthy_meal_name"/>
+        <result property="healthyMealCoverImage" column="healthy_meal_cover_image"/>
+        <result property="hot" column="hot"/>
+        <result property="carbon" column="carbon"/>
+        <result property="fat" column="fat"/>
+        <result property="protein" column="protein"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <collection property="healthyMealItems" ofType="com.phoenix.fitness.modules.fitness.entity.HealthyMealItemEntity"
+                    columnPrefix="mi_">
+            <result property="healthyMealItemId" column="healthy_meal_item_id"/>
+            <result property="healthyMealId" column="healthy_meal_id"/>
+            <result property="healthyMealItemName" column="healthy_meal_item_name"/>
+            <result property="weight" column="weight"/>
+            <result property="share" column="share"/>
+        </collection>
+    </resultMap>
+
+    <select id="getHealthyMealWithDetail" resultMap="healthyMealWithDetailMap">
+        select m.*,
+               mi.healthy_meal_item_id   as mi_healthy_meal_item_id,
+               mi.healthy_meal_id        as mi_healthy_meal_id,
+               mi.healthy_meal_item_name as mi_healthy_meal_item_name,
+               mi.weight                 as mi_weight,
+               mi.share                  as mi_share
+        from tb_healthy_meal m
+                 left join tb_healthy_meal_item mi
+                           on m.healthy_meal_id = mi.healthy_meal_id
+        where m.healthy_meal_id = #{id}
+    </select>
+
+    <select id="getHealthyMealListWithDetail" resultMap="healthyMealWithDetailMap">
+        select m.*,
+               mi.healthy_meal_item_id   as mi_healthy_meal_item_id,
+               mi.healthy_meal_id        as mi_healthy_meal_id,
+               mi.healthy_meal_item_name as mi_healthy_meal_item_name,
+               mi.weight                 as mi_weight,
+               mi.share                  as mi_share
+        from tb_healthy_meal m
+                 left join tb_healthy_meal_item mi
+                           on m.healthy_meal_id = mi.healthy_meal_id
+        where m.delete_flag = 0
+        <if test="user !=null and user.gymId != null">
+            and m.gym_id=#{user.gymId}
+        </if>
+        <if test="user !=null and user.partnerId != null">
+            and m.partner_id=#{user.partnerId}
+        </if>
+        order by m.create_time desc
+    </select>
+
+    <update id="deleteByDeleteFlag">
+        update tb_healthy_meal
+        set delete_flag=1
+        where healthy_meal_id = #{id}
+    </update>
+
+</mapper>

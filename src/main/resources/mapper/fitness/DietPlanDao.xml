@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.DietPlanDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.DietPlanWithItemsDto" id="dietPlanMapWithDetail">
+        <result property="dietPlanId" column="diet_plan_id"/>
+        <result property="dietPlanName" column="diet_plan_name"/>
+        <result property="dietPlanDescription" column="diet_plan_description"/>
+        <result property="gymId" column="gym_id"/>
+        <result property="partnerId" column="partner_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <collection property="dietPlanItems" ofType="com.phoenix.fitness.modules.fitness.dto.DietPlanItemWithAllDto"
+                    columnPrefix="pi_">
+            <result property="dietPlanItemId" column="diet_plan_item_id"/>
+            <result property="hot" column="hot"/>
+            <result property="carbon" column="carbon"/>
+            <result property="fat" column="fat"/>
+            <result property="protein" column="protein"/>
+            <result property="sort" column="sort"/>
+            <association property="mealType" columnPrefix="mt_"
+                         javaType="com.phoenix.fitness.modules.fitness.entity.MealTypeEntity">
+                <result property="mealTypeId" column="meal_type_id"/>
+                <result property="mealTypeName" column="meal_type_name"/>
+                <result property="mealTypeValue" column="meal_type_value"/>
+                <result property="startTime" column="start_time"/>
+                <result property="endTime" column="end_time"/>
+                <result property="sort" column="sort"/>
+            </association>
+            <association property="healthyMeal" columnPrefix="hm_"
+                         javaType="com.phoenix.fitness.modules.fitness.entity.HealthyMealEntity">
+                <result property="healthyMealId" column="healthy_meal_id"/>
+                <result property="healthyMealName" column="healthy_meal_name"/>
+                <result property="healthyMealCoverImage" column="healthy_meal_cover_image"/>
+                <result property="hot" column="hot"/>
+                <result property="carbon" column="carbon"/>
+                <result property="fat" column="fat"/>
+                <result property="protein" column="protein"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <select id="selectDietPlanWithDetail" resultMap="dietPlanMapWithDetail">
+        select dp.*,
+               pi.diet_plan_item_id        as pi_diet_plan_item_id,
+               pi.meal_type_id             as pi_meal_type_id,
+               pi.diet_plan_id             as pi_diet_plan_id,
+               pi.healthy_meal_id          as pi_healthy_meal_id,
+               pi.sort                     as pi_sort,
+               pi.hot                      as pi_hot,
+               pi.carbon                   as pi_carbon,
+               pi.fat                      as pi_fat,
+               pi.protein                  as pi_protein,
+               mt.meal_type_id             as pi_mt_meal_type_id,
+               mt.meal_type_name           as pi_mt_meal_type_name,
+               mt.meal_type_value          as pi_mt_meal_type_value,
+               mt.start_time               as pi_mt_start_time,
+               mt.end_time                 as pi_mt_end_time,
+               mt.sort                     as pi_mt_sort,
+               hm.healthy_meal_id          as pi_hm_healthy_meal_id,
+               hm.healthy_meal_name        as pi_hm_healthy_meal_name,
+               hm.healthy_meal_cover_image as pi_hm_healthy_meal_cover_image,
+               hm.hot                      as pi_hm_hot,
+               hm.carbon                   as pi_hm_carbon,
+               hm.fat                      as pi_hm_fat,
+               hm.protein                  as pi_hm_protein
+        from tb_diet_plan dp
+                 left join tb_diet_plan_item pi
+                           on dp.diet_plan_id = pi.diet_plan_id
+                 left join tb_meal_type mt
+                           on pi.meal_type_id = mt.meal_type_id
+                 left join tb_healthy_meal hm
+                           on hm.healthy_meal_id = pi.healthy_meal_id
+        where dp.diet_plan_id = #{id}
+        order by mt.sort
+    </select>
+
+    <update id="deleteByDeleteFlag">
+        update tb_diet_plan
+        set delete_flag=1
+        where diet_plan_id = #{id}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.CustomerPlanDayDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.CustomerPlanDayEntity" id="customerPlanDayMap">
+        <result property="customerPlanDayId" column="customer_plan_day_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="customerPlanId" column="customer_plan_id"/>
+        <result property="customerPlanPeriodId" column="customer_plan_period_id"/>
+        <result property="customerPlanWeekId" column="customer_plan_week_id"/>
+        <result property="dayOfWeek" column="day_of_week"/>
+        <result property="detailDate" column="detail_date"/>
+        <result property="classId" column="class_id"/>
+        <result property="status" column="status"/>
+        <result property="isActive" column="is_active"/>
+        <result property="isPay" column="is_pay"/>
+        <result property="isRest" column="is_rest"/>
+        <result property="coachId" column="coach_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="customerIsSure" column="customer_is_sure"/>
+        <result property="customerCommentScore" column="customer_comment_score"/>
+        <result property="customerCommentContent" column="customer_comment_content"/>
+        <result property="usedMinute" column="used_minute"/>
+        <result property="usedSecond" column="used_second"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.CustomerPlanDayWithAllDto" id="customerPlanDayMapWithCommon">
+        <result property="customerPlanDayId" column="customer_plan_day_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="customerPlanId" column="customer_plan_id"/>
+        <result property="customerPlanPeriodId" column="customer_plan_period_id"/>
+        <result property="customerPlanWeekId" column="customer_plan_week_id"/>
+        <result property="dayOfWeek" column="day_of_week"/>
+        <result property="detailDate" column="detail_date"/>
+        <result property="classId" column="class_id"/>
+        <result property="status" column="status"/>
+        <result property="isActive" column="is_active"/>
+        <result property="isPay" column="is_pay"/>
+        <result property="isRest" column="is_rest"/>
+        <result property="coachId" column="coach_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="customerIsSure" column="customer_is_sure"/>
+        <result property="customerCommentScore" column="customer_comment_score"/>
+        <result property="customerCommentContent" column="customer_comment_content"/>
+        <result property="usedMinute" column="used_minute"/>
+        <result property="usedSecond" column="used_second"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <association property="customer" columnPrefix="c_"
+                     javaType="com.phoenix.fitness.modules.fitness.entity.CustomerEntity">
+            <result property="customerId" column="customer_id"/>
+            <result property="name" column="name"/>
+            <result property="mobile" column="mobile"/>
+            <result property="gender" column="gender"/>
+            <result property="mail" column="mail"/>
+            <result property="birthday" column="birthday"/>
+            <result property="avatar" column="avatar"/>
+            <result property="coachId" column="coach_id"/>
+            <result property="gymId" column="gym_id"/>
+            <result property="userId" column="user_id"/>
+            <result property="customerNumber" column="customer_number"/>
+            <result property="isVip" column="is_vip"/>
+        </association>
+        <association property="classInfo" columnPrefix="ci_"
+                     javaType="com.phoenix.fitness.modules.fitness.dto.ClassInfoWithExercisesCustomerDto">
+            <result property="classId" column="class_id"/>
+            <result property="className" column="class_name"/>
+            <result property="classCoverImage" column="class_cover_image"/>
+            <result property="duration" column="duration"/>
+        </association>
+        <association property="customerPlan" columnPrefix="cp_"
+                     javaType="com.phoenix.fitness.modules.fitness.dto.CustomerPlanWithTrainingPlanDto">
+            <result property="customerPlanId" column="customer_plan_id"/>
+            <result property="customerId" column="customer_id"/>
+            <result property="trainingPlanId" column="training_plan_id"/>
+            <result property="coachId" column="coach_id"/>
+            <result property="startTime" column="start_time"/>
+            <result property="endTime" column="end_time"/>
+            <result property="startDate" column="start_date"/>
+            <association property="trainingPlan" columnPrefix="tp_"
+                         javaType="com.phoenix.fitness.modules.fitness.entity.TrainingPlanEntity">
+                <result property="trainingPlanId" column="training_plan_id"/>
+                <result property="trainingPlanName" column="training_plan_name"/>
+                <result property="goalId" column="goal_id"/>
+                <result property="trainingPlanDescription" column="training_plan_description"/>
+                <result property="trainingPlanCoverImage" column="training_plan_cover_image"/>
+                <result property="price" column="price"/>
+                <result property="favorablePrice" column="favorable_price"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <select id="selectCustomerPlanDayWithDetailByDate" resultMap="customerPlanDayMapWithCommon">
+        select cpd.*,
+        c.customer_id as c_customer_id,
+        c.name as c_name,
+        c.mobile as c_mobile,
+        c.gender as c_gender,
+        c.mail as c_mail,
+        c.birthday as c_birthday,
+        c.avatar as c_avatar,
+        c.coach_id as c_coach_id,
+        c.gym_id as c_gym_id,
+        c.user_id as c_user_id,
+        c.customer_number as c_customer_number,
+        c.is_vip as c_is_vip,
+        ci.class_id as ci_class_id,
+        ci.class_name as ci_class_name,
+        ci.class_cover_image as ci_class_cover_image,
+        ci.duration as ci_duration,
+        cp.customer_plan_id as cp_customer_plan_id,
+        cp.customer_id as cp_customer_id,
+        cp.training_plan_id as cp_training_plan_id,
+        cp.coach_id as cp_coach_id,
+        cp.start_time as cp_start_time,
+        cp.end_time as cp_end_time,
+        cp.start_date as cp_start_date,
+        tp.training_plan_id as cp_tp_training_plan_id,
+        tp.training_plan_name as cp_tp_training_plan_name,
+        tp.training_plan_description as cp_tp_training_plan_description,
+        tp.goal_id as cp_tp_goal_id,
+        tp.training_plan_cover_image as cp_tp_training_plan_cover_image,
+        tp.price as cp_tp_price,
+        tp.favorable_price as cp_tp_favorable_price
+        from tb_customer_plan_day cpd
+        left join tb_customer c
+        on cpd.customer_id = c.customer_id
+        left join tb_class_info ci
+        on ci.class_id = cpd.class_id
+        left join tb_customer_plan cp
+        on cp.customer_id = cpd.customer_id
+        left join tb_training_plan tp
+        on cp.training_plan_id = tp.training_plan_id
+        where cpd.detail_date = #{date}
+        and cpd.is_active = 1
+        and cpd.is_rest=0
+        <if test="user != null and user.gymId != null">
+            and cpd.gym_id=#{user.gymId}
+        </if>
+        <if test="user != null and user.partnerId != null">
+            and cpd.partner_id=#{user.partnerId}
+        </if>
+        order by cp.start_time
+    </select>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.CustomerPlanDayWithAllDto" id="customerPlanDayWithDetailMap">
+        <result property="customerPlanDayId" column="customer_plan_day_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="customerPlanId" column="customer_plan_id"/>
+        <result property="customerPlanPeriodId" column="customer_plan_period_id"/>
+        <result property="customerPlanWeekId" column="customer_plan_week_id"/>
+        <result property="dayOfWeek" column="day_of_week"/>
+        <result property="detailDate" column="detail_date"/>
+        <result property="classId" column="class_id"/>
+        <result property="status" column="status"/>
+        <result property="isActive" column="is_active"/>
+        <result property="isPay" column="is_pay"/>
+        <result property="isRest" column="is_rest"/>
+        <result property="coachId" column="coach_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="customerIsSure" column="customer_is_sure"/>
+        <result property="customerCommentScore" column="customer_comment_score"/>
+        <result property="customerCommentContent" column="customer_comment_content"/>
+        <result property="usedMinute" column="used_minute"/>
+        <result property="usedSecond" column="used_second"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <association property="customer" columnPrefix="c_"
+                     javaType="com.phoenix.fitness.modules.fitness.entity.CustomerEntity">
+            <result property="customerId" column="customer_id"/>
+            <result property="name" column="name"/>
+            <result property="mobile" column="mobile"/>
+            <result property="gender" column="gender"/>
+            <result property="mail" column="mail"/>
+            <result property="birthday" column="birthday"/>
+            <result property="avatar" column="avatar"/>
+            <result property="coachId" column="coach_id"/>
+            <result property="gymId" column="gym_id"/>
+            <result property="userId" column="user_id"/>
+            <result property="customerNumber" column="customer_number"/>
+            <result property="isVip" column="is_vip"/>
+            <result property="vipEndDate" column="vip_end_date"/>
+            <result property="currentClass" column="current_class"/>
+            <result property="totalClass" column="total_class"/>
+        </association>
+        <association property="classInfo" columnPrefix="ci_"
+                     javaType="com.phoenix.fitness.modules.fitness.dto.ClassInfoWithExercisesCustomerDto">
+            <result property="classId" column="class_id"/>
+            <result property="className" column="class_name"/>
+            <result property="classCoverImage" column="class_cover_image"/>
+            <result property="duration" column="duration"/>
+            <collection property="exercises"
+                        ofType="com.phoenix.fitness.modules.fitness.dto.ExerciseWithActionSetCustomerDto"
+                        columnPrefix="e_">
+                <result property="exerciseId" column="exercise_id"/>
+                <result property="exerciseName" column="exercise_name"/>
+                <collection property="actionSets" ofType="com.phoenix.fitness.modules.fitness.dto.ActionSetInCustomerDto"
+                            columnPrefix="as_">
+                    <result property="actionSetCustomerId" column="action_set_customer_id"/>
+                    <result property="actionSetType" column="action_set_type"/>
+                    <result property="sort" column="sort"/>
+                    <result property="standardSetNumber" column="standard_set_number"/>
+                    <result property="realSetNumber" column="real_set_number"/>
+                    <result property="standardReduceSetNumber" column="standard_reduce_set_number"/>
+                    <result property="realReduceSetNumber" column="real_reduce_set_number"/>
+                    <result property="standardRestInternal" column="standard_rest_internal"/>
+                    <result property="realRestInternal" column="real_rest_internal"/>
+                    <collection property="actions"
+                                ofType="com.phoenix.fitness.modules.fitness.entity.ActionSetActionInCustomerEntity"
+                                columnPrefix="a_">
+                        <result property="actionSetActionInCustomerId" column="action_set_action_in_customer_id"/>
+                        <result property="actionId" column="action_id"/>
+                        <result property="actionSetCustomerId" column="action_set_customer_id"/>
+                        <result property="actionName" column="action_name"/>
+                        <result property="containWeight" column="contain_weight"/>
+                        <result property="unit" column="unit"/>
+                        <result property="setNumber" column="set_number"/>
+                        <result property="reduceSetNumber" column="reduce_set_number"/>
+                        <result property="count" column="count"/>
+                        <result property="restInternal" column="rest_internal"/>
+                        <result property="weight" column="weight"/>
+                        <result property="time" column="time"/>
+                    </collection>
+                    <collection property="oneSets"
+                                ofType="com.phoenix.fitness.modules.fitness.entity.ActionSetCustomerOneSetEntity"
+                                columnPrefix="os_">
+                        <result property="oneSetId" column="one_set_id"/>
+                        <result property="setIndex" column="set_index"/>
+                        <result property="status" column="status"/>
+                        <result property="minute" column="minute"/>
+                        <result property="second" column="second"/>
+                        <result property="microSecond" column="micro_second"/>
+                        <result property="realRestTime" column="real_rest_time"/>
+                        <collection property="oneSetDetails"
+                                    ofType="com.phoenix.fitness.modules.fitness.entity.ActionSetCustomerOneSetDetailEntity"
+                                    columnPrefix="osd_">
+                            <result property="detailIndex" column="detail_index"/>
+                            <result property="standardCount" column="standard_count"/>
+                            <result property="realCount" column="real_count"/>
+                            <result property="standardWeight" column="standard_weight"/>
+                            <result property="realWeight" column="real_weight"/>
+                            <result property="standardTime" column="standard_time"/>
+                            <result property="realTime" column="real_time"/>
+                            <result property="standardMeter" column="standard_meter"/>
+                            <result property="realMeter" column="real_meter"/>
+                            <result property="isComplete" column="is_complete"/>
+                            <result property="actionId" column="action_id"/>
+                            <association property="action" columnPrefix="a_"
+                                         javaType="com.phoenix.fitness.modules.fitness.entity.ActionEntity">
+                                <result property="actionId" column="action_id"/>
+                                <result property="actionName" column="action_name"/>
+                                <result property="containWeight" column="contain_weight"/>
+                                <result property="unit" column="unit"/>
+                            </association>
+                        </collection>
+                    </collection>
+                    <collection property="imageUrls" columnPrefix="image_" javaType="string">
+                        <result property="imageUrl" column="image_url"/>
+                    </collection>
+                </collection>
+            </collection>
+        </association>
+        <association property="customerPlan" columnPrefix="cp_"
+                     javaType="com.phoenix.fitness.modules.fitness.dto.CustomerPlanWithTrainingPlanDto">
+            <result property="customerPlanId" column="customer_plan_id"/>
+            <result property="customerId" column="customer_id"/>
+            <result property="trainingPlanId" column="training_plan_id"/>
+            <result property="startTime" column="start_time"/>
+            <result property="coachId" column="coach_id"/>
+            <result property="endTime" column="end_time"/>
+            <result property="startDate" column="start_date"/>
+            <association property="trainingPlan" columnPrefix="tp_"
+                         javaType="com.phoenix.fitness.modules.fitness.entity.TrainingPlanEntity">
+                <result property="trainingPlanId" column="training_plan_id"/>
+                <result property="trainingPlanName" column="training_plan_name"/>
+                <result property="goalId" column="goal_id"/>
+                <result property="trainingPlanDescription" column="training_plan_description"/>
+                <result property="trainingPlanCoverImage" column="training_plan_cover_image"/>
+                <result property="price" column="price"/>
+                <result property="favorablePrice" column="favorable_price"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <select id="selectCustomerPlanDayWithDetail" resultMap="customerPlanDayWithDetailMap">
+        select cpd.*,
+               c.customer_id                        as c_customer_id,
+               c.name                               as c_name,
+               c.mobile                             as c_mobile,
+               c.gender                             as c_gender,
+               c.mail                               as c_mail,
+               c.birthday                           as c_birthday,
+               c.avatar                             as c_avatar,
+               c.coach_id                           as c_coach_id,
+               c.gym_id                             as c_gym_id,
+               c.user_id                            as c_user_id,
+               c.customer_number                    as c_customer_number,
+               c.is_vip                             as c_is_vip,
+               c.vip_end_date                       as c_vip_end_date,
+               c.current_class                      as c_current_class,
+               c.total_class                        as c_total_class,
+               ci.class_id                          as ci_class_id,
+               ci.class_name                        as ci_class_name,
+               ci.class_cover_image                 as ci_class_cover_image,
+               ci.duration                          as ci_duration,
+               e.exercise_id                        as ci_e_exercise_id,
+               e.exercise_name                      as ci_e_exercise_name,
+               actionSet.action_set_customer_id     as ci_e_as_action_set_customer_id,
+               actionSet.action_set_type            as ci_e_as_action_set_type,
+               actionSet.sort                       as ci_e_as_sort,
+               actionSet.standard_set_number        as ci_e_as_standard_set_number,
+               actionSet.real_set_number            as ci_e_as_real_set_number,
+               actionSet.standard_reduce_set_number as ci_e_as_standard_reduce_set_number,
+               actionSet.real_reduce_set_number     as ci_e_as_real_reduce_set_number,
+               actionSet.standard_rest_internal     as ci_e_as_standard_rest_internal,
+               actionSet.real_rest_internal         as ci_e_as_real_rest_internal,
+               asci.image_url                       as ci_e_as_image_image_url,
+               asa.action_set_action_in_customer_id as ci_e_as_a_action_set_action_in_customer_id,
+               asa.action_id                        as ci_e_as_a_action_id,
+               asa.action_set_customer_id           as ci_e_as_a_action_set_customer_id,
+               asa.exercise_id                      as ci_e_as_a_exercise_id,
+               asa.count                            as ci_e_as_a_count,
+               asa.weight                           as ci_e_as_a_weight,
+               asa.time                             as ci_e_as_a_time,
+               asa.meter                            as ci_e_as_a_meter,
+               a.action_name                        as ci_e_as_a_action_name,
+               a.contain_weight                     as ci_e_as_a_contain_weight,
+               a.unit                               as ci_e_as_a_unit,
+               os.one_set_id                        as ci_e_as_os_one_set_id,
+               os.set_index                         as ci_e_as_os_set_index,
+               os.status                            as ci_e_as_os_status,
+               os.minute                            as ci_e_as_os_minute,
+               os.second                            as ci_e_as_os_second,
+               os.micro_second                      as ci_e_as_os_micro_second,
+               os.real_rest_time                    as ci_e_as_os_real_rest_time,
+               osd.detail_index                     as ci_e_as_os_osd_detail_index,
+               osd.standard_count                   as ci_e_as_os_osd_standard_count,
+               osd.real_count                       as ci_e_as_os_osd_real_count,
+               osd.standard_weight                  as ci_e_as_os_osd_standard_weight,
+               osd.real_weight                      as ci_e_as_os_osd_real_weight,
+               osd.standard_time                    as ci_e_as_os_osd_standard_time,
+               osd.real_time                        as ci_e_as_os_osd_real_time,
+               osd.standard_meter                   as ci_e_as_os_osd_standard_meter,
+               osd.real_meter                       as ci_e_as_os_osd_real_meter,
+               osd.is_complete                      as ci_e_as_os_osd_is_complete,
+               osd.action_id                        as ci_e_as_os_osd_action_id,
+               aa.action_id                         as ci_e_as_os_osd_a_action_id,
+               aa.action_name                       as ci_e_as_os_osd_a_action_name,
+               aa.contain_weight                    as ci_e_as_os_osd_a_contain_weight,
+               aa.unit                              as ci_e_as_os_osd_a_unit,
+               cp.customer_plan_id                  as cp_customer_plan_id,
+               cp.customer_id                       as cp_customer_id,
+               cp.training_plan_id                  as cp_training_plan_id,
+               cp.coach_id                          as cp_coach_id,
+               cp.start_time                        as cp_start_time,
+               cp.end_time                          as cp_end_time,
+               cp.start_date                        as cp_start_date,
+               tp.training_plan_id                  as cp_tp_training_plan_id,
+               tp.training_plan_name                as cp_tp_training_plan_name,
+               tp.training_plan_description         as cp_tp_training_plan_description,
+               tp.goal_id                           as cp_tp_goal_id,
+               tp.training_plan_cover_image         as cp_tp_training_plan_cover_image,
+               tp.price                             as cp_tp_price,
+               tp.favorable_price                   as cp_tp_favorable_price
+        from tb_customer_plan_day cpd
+                 left join tb_customer c
+                           on cpd.customer_id = c.customer_id
+                 left join tb_class_info ci
+                           on ci.class_id = cpd.class_id
+                 left join tb_customer_plan cp
+                           on cpd.customer_plan_id = cpd.customer_plan_id
+                               and cp.customer_id = cpd.customer_id
+                 left join tb_training_plan tp
+                           on cp.training_plan_id = tp.training_plan_id
+                 left JOIN tb_class_exercise_relation cer
+                           on ci.class_id = cer.class_id
+                 left join tb_exercise e
+                           on cer.exercise_id = e.exercise_id
+                 left join tb_action_set_customer actionSet
+                           on cer.exercise_id = actionSet.exercise_id
+                               and actionSet.customer_plan_day_id = #{id}
+                 left join tb_action_set_action_in_customer asa
+                           on asa.customer_plan_day_id = #{id}
+                               and asa.action_set_customer_id = actionSet.action_set_customer_id
+                 left join tb_action a
+                           on asa.action_id = a.action_id
+                 left join tb_action_set_customer_one_set os
+                           on os.action_set_customer_id = actionSet.action_set_customer_id
+                 left join tb_action_set_customer_one_set_detail osd
+                           on os.one_set_id = osd.one_set_id
+                 left join tb_action aa
+                           on aa.action_id = osd.action_id
+                 left join tb_action_set_customer_image asci
+                           on asci.action_set_customer_id = actionSet.action_set_customer_id
+                               and asci.customer_plan_day_id = #{id}
+        where cpd.customer_plan_day_id = #{id}
+        order by cer.class_exercise_relation_id, actionSet.sort, asa.sort, os.set_index,
+                 osd.detail_index
+    </select>
+
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.CustomerPlanDayWithClassInfoDto"
+               id="customerPlanDayWithClassMap">
+        <result property="customerPlanDayId" column="customer_plan_day_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="customerPlanId" column="customer_plan_id"/>
+        <result property="customerPlanPeriodId" column="customer_plan_period_id"/>
+        <result property="customerPlanWeekId" column="customer_plan_week_id"/>
+        <result property="dayOfWeek" column="day_of_week"/>
+        <result property="detailDate" column="detail_date"/>
+        <result property="classId" column="class_id"/>
+        <result property="status" column="status"/>
+        <result property="isActive" column="is_active"/>
+        <result property="isPay" column="is_pay"/>
+        <result property="isRest" column="is_rest"/>
+        <result property="coachId" column="coach_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="customerIsSure" column="customer_is_sure"/>
+        <result property="customerCommentScore" column="customer_comment_score"/>
+        <result property="customerCommentContent" column="customer_comment_content"/>
+        <result property="usedMinute" column="used_minute"/>
+        <result property="usedSecond" column="used_second"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <association property="classInfo" columnPrefix="ci_"
+                     javaType="com.phoenix.fitness.modules.fitness.dto.ClassInfoWithExercisesDto">
+            <result property="classId" column="class_id"/>
+            <result property="className" column="class_name"/>
+            <result property="classCoverImage" column="class_cover_image"/>
+            <result property="duration" column="duration"/>
+        </association>
+    </resultMap>
+
+    <select id="selectOneCustomerPlan" resultMap="customerPlanDayWithClassMap">
+        select cpd.*,
+               ci.class_id          as ci_class_id,
+               ci.class_name        as ci_class_name,
+               ci.class_cover_image as ci_class_cover_image,
+               ci.duration          as ci_duration
+        from tb_customer_plan_day cpd
+                 left join tb_class_info ci
+                           on ci.class_id = cpd.class_id
+        where cpd.customer_plan_id = #{id}
+          and cpd.is_active = 1
+          and cpd.is_rest = 0
+        order by cpd.detail_date asc
+    </select>
+
+    <select id="selectCustomerAllDays" resultMap="customerPlanDayWithClassMap">
+        select cpd.*,
+               ci.class_id          as ci_class_id,
+               ci.class_name        as ci_class_name,
+               ci.class_cover_image as ci_class_cover_image,
+               ci.duration          as ci_duration
+        from tb_customer_plan_day cpd
+                 left join tb_class_info ci
+                           on ci.class_id = cpd.class_id
+        where cpd.customer_id = #{customerId}
+          and cpd.is_active = 1
+          and cpd.is_rest = 0
+        order by cpd.detail_date asc
+    </select>
+
+
+    <select id="selectCoachOneDay" resultMap="customerPlanDayWithClassMap">
+        select cpd.*,
+               ci.class_id          as ci_class_id,
+               ci.class_name        as ci_class_name,
+               ci.class_cover_image as ci_class_cover_image,
+               ci.duration          as ci_duration
+        from tb_customer_plan_day cpd
+                 left join tb_class_info ci
+                           on ci.class_id = cpd.class_id
+        where cpd.coach_id = #{coachDateVO.coachId}
+          and cpd.is_active = 1
+          and cpd.is_rest = 0
+          and cpd.detail_date = #{coachDateVO.date}
+    </select>
+
+    <select id="selectOneCustomerHistory" resultMap="customerPlanDayWithClassMap">
+        select cpd.*,
+               ci.class_id          as ci_class_id,
+               ci.class_name        as ci_class_name,
+               ci.class_cover_image as ci_class_cover_image,
+               ci.duration          as ci_duration
+        from tb_customer_plan_day cpd
+                 left join tb_class_info ci
+                           on ci.class_id = cpd.class_id
+        where cpd.customer_plan_id = #{id}
+          and cpd.status = 1
+          and cpd.is_rest = 0
+          and cpd.is_active = 1
+    </select>
+
+    <select id="listOneMonthCount" resultType="com.phoenix.fitness.modules.fitness.dto.MonthClassCountDto">
+        SELECT detail_date, count(*) as count
+        FROM tb_customer_plan_day cpd
+        WHERE DATE_FORMAT(detail_date, '%Y%m') = #{yearMonth}
+        and cpd.is_active = 1
+        and cpd.is_rest=0
+        <if test="user != null and user.gymId !=null ">
+            and cpd.gym_id=#{user.gymId}
+        </if>
+        <if test="user != null and user.partnerId !=null">
+            and cpd.partner_id=#{user.partnerId}
+        </if>
+        group by detail_date
+        order by detail_date asc
+    </select>
+</mapper>

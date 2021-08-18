@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.GymDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.GymEntity" id="gymMap">
+        <result property="gymId" column="gym_id"/>
+        <result property="gymName" column="gym_name"/>
+        <result property="gymImageUrl" column="gym_image_url"/>
+        <result property="city" column="city"/>
+        <result property="address" column="address"/>
+        <result property="partnerId" column="partner_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.GymWithPartnerDto" id="gymWithPartnerMap">
+        <result property="gymId" column="gym_id"/>
+        <result property="gymName" column="gym_name"/>
+        <result property="gymImageUrl" column="gym_image_url"/>
+        <result property="city" column="city"/>
+        <result property="address" column="address"/>
+        <result property="partnerId" column="partner_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <association property="partner" columnPrefix="p_"
+                     javaType="com.phoenix.fitness.modules.fitness.entity.PartnerEntity">
+            <result property="partnerId" column="partner_id"/>
+            <result property="partnerName" column="partner_name"/>
+            <result property="bossName" column="boss_name"/>
+            <result property="bossMobile" column="boss_mobile"/>
+        </association>
+    </resultMap>
+
+    <select id="selectGymWithPartner" resultMap="gymWithPartnerMap">
+        select g.*,
+        p.partner_id as p_partner_id,
+        p.partner_name as p_partner_name,
+        p.boss_name as p_boss_name,
+        p.boss_mobile as p_boss_mobile
+        from tb_gym g
+        left join tb_partner p
+        on g.partner_id = p.partner_id
+        where 1=1
+        <if test="gymName != null and gymName != ''">
+            and g.gym_name like concat('%',#{gymName},'%')
+        </if>
+        and g.delete_flag=0
+        order by create_time desc
+    </select>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.GymWithCoachesDto" id="gymWithCoachesMap">
+        <result property="gymId" column="gym_id"/>
+        <result property="gymName" column="gym_name"/>
+        <result property="gymImageUrl" column="gym_image_url"/>
+        <result property="city" column="city"/>
+        <result property="address" column="address"/>
+        <result property="partnerId" column="partner_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <association property="partner" columnPrefix="p_"
+                     javaType="com.phoenix.fitness.modules.fitness.entity.PartnerEntity">
+            <result property="partnerId" column="partner_id"/>
+            <result property="partnerName" column="partner_name"/>
+            <result property="bossName" column="boss_name"/>
+            <result property="bossMobile" column="boss_mobile"/>
+        </association>
+        <collection property="coaches" columnPrefix="c_"
+                    ofType="com.phoenix.fitness.modules.fitness.entity.CoachEntity">
+            <result property="coachId" column="coach_id"/>
+            <result property="coachName" column="coach_name"/>
+            <result property="mobile" column="mobile"/>
+            <result property="username" column="username"/>
+            <result property="gender" column="gender"/>
+            <result property="email" column="email"/>
+            <result property="identityCard" column="identity_card"/>
+            <result property="birthday" column="birthday"/>
+            <result property="avatar" column="avatar"/>
+            <result property="userId" column="user_id"/>
+            <result property="perClassPrice" column="per_class_price"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectGymWithCoaches" resultMap="gymWithCoachesMap">
+        select g.*,
+               p.partner_id      as p_partner_id,
+               p.partner_name    as p_partner_name,
+               p.boss_name       as p_boss_name,
+               p.boss_mobile     as p_boss_mobile,
+               c.coach_id        as c_coach_id,
+               c.coach_name      as c_coach_name,
+               c.mobile          as c_mobile,
+               c.username        as c_username,
+               c.gender          as c_gender,
+               c.email           as c_email,
+               c.identity_card   as c_identity_card,
+               c.birthday        as c_birthday,
+               c.avatar          as c_avatar,
+               c.user_id         as c_user_id,
+               c.per_class_price as c_per_class_price
+        from tb_gym g
+                 left join tb_partner p
+                           on g.partner_id = p.partner_id
+                 left join tb_gym_coach_relation gcr
+                           on gcr.gym_id = g.gym_id
+                 left join tb_coach c
+                           on gcr.coach_id = c.coach_id
+        where g.gym_id = #{id}
+    </select>
+
+
+    <update id="deleteByDeleteFlag">
+        update tb_gym
+        set delete_flag=1
+        where gym_id = #{id}
+    </update>
+
+
+</mapper>

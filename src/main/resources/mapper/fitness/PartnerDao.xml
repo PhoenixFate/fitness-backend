@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.PartnerDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.PartnerEntity" id="partnerMap">
+        <result property="partnerId" column="partner_id"/>
+        <result property="partnerName" column="partner_name"/>
+        <result property="bossName" column="boss_name"/>
+        <result property="bossMobile" column="boss_mobile"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.PartnerWithGymsDto" id="partnerWithGymsMap">
+        <result property="partnerId" column="partner_id"/>
+        <result property="partnerName" column="partner_name"/>
+        <result property="bossName" column="boss_name"/>
+        <result property="bossMobile" column="boss_mobile"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <collection property="gyms" ofType="com.phoenix.fitness.modules.fitness.entity.GymEntity"
+                    columnPrefix="g_">
+            <result property="gymId" column="gym_id"/>
+            <result property="gymName" column="gym_name"/>
+            <result property="gymImageUrl" column="gym_image_url"/>
+            <result property="city" column="city"/>
+            <result property="address" column="address"/>
+            <result property="partnerId" column="partner_id"/>
+        </collection>
+    </resultMap>
+
+    <select id="getPartnerWithGyms" resultMap="partnerWithGymsMap">
+        select p.*,
+               g.gym_id        as g_gym_id,
+               g.partner_id    as g_partner_id,
+               g.city          as g_city,
+               g.address       as g_address,
+               g.gym_name      as g_gym_name,
+               g.gym_image_url as g_gym_image_url
+        from tb_partner p
+                 left join tb_gym g
+                           on p.partner_id = g.partner_id
+                               and g.delete_flag = 0
+        where p.partner_id = #{id}
+    </select>
+
+    <update id="deleteByDeleteFlag">
+        update tb_partner
+        set delete_flag=1
+        where partner_id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.VisitorDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.VisitorEntity" id="visitorMap">
+        <result property="visitorId" column="visitor_id"/>
+        <result property="visitTime" column="visit_time"/>
+        <result property="nickname" column="nickname"/>
+        <result property="consultProject" column="consult_project"/>
+        <result property="followUp" column="follow_up"/>
+        <result property="addDate" column="add_date"/>
+        <result property="addTime" column="add_time"/>
+        <result property="gymId" column="gym_id"/>
+        <result property="partnerId" column="partner_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+    <select id="selectVisitorList" resultMap="visitorMap">
+        select *
+        from tb_visitor v
+        where delete_flag = 0
+        <if test="searchForm.nickname != null and searchForm.nickname != '' ">
+            and v.nickname like concat('%',#{searchForm.nickname},'%')
+        </if>
+        <if test="searchForm.startDate != null">
+            and v.visit_time &gt;= #{searchForm.startDate}
+        </if>
+        <if test="searchForm.endDate != null">
+            and v.visit_time &lt;= #{searchForm.endDate}
+        </if>
+        order by v.visit_time desc
+    </select>
+
+    <select id="selectCustomerPeriodCount" resultType="com.phoenix.fitness.modules.admin.dto.PeriodCountDto">
+        select h.period, count(*) as count
+        from tb_customer_add_history h
+        group by h.period
+    </select>
+    <select id="selectVisitorPeriodCount" resultType="com.phoenix.fitness.modules.admin.dto.PeriodCountDto">
+        select v.period, count(*) as count
+        from tb_visitor v
+        group by v.period
+    </select>
+
+</mapper>

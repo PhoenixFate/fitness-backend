@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.TrainingGoalDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.TrainingGoalEntity" id="trainingGoalMap">
+        <result property="id" column="id"/>
+        <result property="goalName" column="goal_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+
+    <update id="deleteByDeleteFlag">
+        update tb_training_goal set delete_flag=1
+        where training_goal_id =#{id}
+    </update>
+
+</mapper>

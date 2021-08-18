@@ -1,0 +1,72 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://192.168.1.40:3306/coach-app?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+      username: root
+      password: centos123qwer
+      initial-size: 10
+      max-active: 100
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      #Oracle需要打开注释
+      #validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        #login-username: admin
+        #login-password: admin
+      filter:
+        stat:
+          log-slow-sql: true
+          slow-sql-millis: 1000
+          merge-sql: false
+        wall:
+          config:
+            multi-statement-allow: true
+
+fitness:
+  wechat:
+    appId: wx3c7e7046b6fe3dcf
+    appSecret: bba00c8d41f227b022470e4f1014bda2
+  pay:
+    #生成的二维码存放路径
+    qrCodePath: ./qrCode/
+  alipay:
+    # 支付宝请求地址
+    aliUrl: https://openapi.alipay.com/gateway.do
+    # 支付宝应用ID
+    aliAppId: 2021002125689431
+    # 本地通过"支付宝开放平台开发助手"生成的私钥
+    aliAppPrivateKey: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCXgQmAqNKALwaTkR+mz/ySozl5xg0LdHWibcQV7AZLk8ey4qfALlWFfzo1YsVMSj0pDz8DZVEt9WalkHCeEeYS/acvmwfrYw1/+IMntfa90kLRQeiGdVd1BCToqpAg53L6350Vpfw1MRVfiDMxflIgAyeWe3cZcoM3oRn+I0SkCsLRZKY+ngtGxeZ9b+LneNh3Ze6+1CL8q+iAEpf6juzpYdFGD1F4uFTg18rAIZVBInd+yR4IiNKfK9uqWNn+CPQ9VDmQzZouFPh1KGpkf3JzTXBocUp0RQIuNS045grIt5fWIepSEolH3n/pC7CZBrUsLgoddXCQ6EvhjqRqV+jLAgMBAAECggEAR3ZtRgvb5uzHnFmq5WNbzstBNChwRMP1LN27zV9chM+7Nazl1afFXUfq6/2f9OFbwf9YCMEErrn/Zf8gr97feHu/HZxx+tzpJEDTlKqnLVh9ffkptiqpSx/eTQUPIQYrXRyXGvwFYA27+CjlhOYB1OnIBZpNTmqObHIIMbDvErTpUGXSokxmHiKjHwA6PIMZ/JzjAquDSQb+m8ugBYcEIXBpwn/1iIoNFhfSJ7vfHJxSk4XnyKU1UOT2HjB8+RhGT9fEDL1DyQu9XOlXR0/4qRUjmg6yBX8VWA4/fAe9CBhaijc6H2u9s5JmV5sZoYV9xb9lhEplIIZedCnKcJxHaQKBgQDgvk2LSM1FjGzT+OhdpwVWAqJZxzvAJ0zgGeGACWWNK6YG/QLLNwIxmB06WmAL3KoN+mmXPf7kNi59iMLm6dUPdEwwftU6PzGm4B5hjiiHaKJh5TzduxEcyDiKUr6cm3LWbQnalN5yJGgK67vZSncmzvnLgywoMh02JVZJ8Ev9fQKBgQCskySYZWoDtYWfppRHsNFEMxpB1bZMa3eyks88Hy42jfAJCJTPQrNM6bwT1XIcqcgCspqLe2tVChvGzCA82ixtykw7nXdY/8cI3e8HEWQ1uNee+m/CdU2tV1DWDwMbqcy2dTpgXEnaRtCVSVr+dspTe2V1SWdKaptLLano9Apx5wKBgQDE1gfmgLnAOxApyywAskLbJO16giOT1RfggupckF5P+TWtkzU6NJCITTj0HalXWknaekK2wwaWa9nl+rzxL0V7BpmgM8WfATAEfvA88xwOFJd79CGN9cQ0GCxlAbmOQhufL9rchVwaTkaNog9hbXXUGJzxII6xGcs53BOqKHr1pQKBgHITymsbDtto0O3aNca2MX89sKu4VAtsNvHKbkc17VyOsw+lpojjdJbxIyyROh+Mc/Skj9iIO0k5p2bgZKcVKa1hvsbhrpUcbzuDSZCIhI+mopIqxlnrJO/i+kKmJc3RjstF7tLn7sHlcdhdZ1Myv0g0F7tSTH86vXESvHCLcaQdAoGAZPW5WdASLy61r5G3Isq10UkQQxttNBvZfChqsQ1bCEFekBPs9PjCAlB+lcdvC6wJoCvLYArPScSQTEcfrqp94gUDaw+QtoSu541QURim1lk4g5NTTFX6yCqpWdJcsjrmIxHyaxjC5oU43OX37cxMTuxguOoIynafn7XlePZKpA8=
+    # 本地通过"支付宝开放平台开发助手"生成的公钥
+    aliAppPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl4EJgKjSgC8Gk5Efps/8kqM5ecYNC3R1om3EFewGS5PHsuKnwC5VhX86NWLFTEo9KQ8/A2VRLfVmpZBwnhHmEv2nL5sH62MNf/iDJ7X2vdJC0UHohnVXdQQk6KqQIOdy+t+dFaX8NTEVX4gzMX5SIAMnlnt3GXKDN6EZ/iNEpArC0WSmPp4LRsXmfW/i53jYd2XuvtQi/KvogBKX+o7s6WHRRg9ReLhU4NfKwCGVQSJ3fskeCIjSnyvbqljZ/gj0PVQ5kM2aLhT4dShqZH9yc01waHFKdEUCLjUtOOYKyLeX1iHqUhKJR95/6QuwmQa1LC4KHXVwkOhL4Y6kalfoywIDAQAB
+    # 支付宝应用设置本地公钥后生成对应的支付宝公钥（非本地生成的公钥）
+    alipayPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArGv3pABTJ3RIudPwgOqXVaXmOL0+ChGGZK3J/UhR8lucrQ65wRnCq5r6P+/3bL10ZGRGm9iB6eprv1NfdIxJeeCLg6YiPaMiRG+83mgWX6bZudP8ThkVo8G4aqG53D237cgC0/hJU9LyGyNzUc2ZiQ9w6qKWvaG9/jADW97moBRLUaRbJ987QhW8FaX08lMYof8VLXaY/wKFa8IxUcb2lvBKjNCXg1c8u0Ye69rew76u3NsdmdyZBuQnjSdx/qzFMsGWg5We3WJSY/Ko1OQpuV8kM2JcOVOR79YycxJe3e0shn7s5EiGHYtPRthvuWEtwLlzrHsC0axN/nZbE05BGQIDAQAB
+    # 支付宝回调的接口地址
+    aliNotifyUrl: https://fitness.bytes-space.com/fitness/pad/alipay/aliNotify
+  wechatpay:
+    # 服务商/直连商户平台 公众号appid
+    appId: wxd8163cce30befaee
+    #服务商id/商户id
+    mchId: 1609896630
+    # 自定义api密钥
+    apiKey: centos123qwercentos123qwer202108
+    #秘钥
+    keyPath: /root/projects/fitness/cert/apiclient_key.pem
+    #CA证书 格式.pem
+    certPath: /root/projects/fitness/cert/apiclient_cert.pem
+    #CA证书 格式.p12
+    certP12Path: /root/projects/fitness/cert/apiclient_cert.p12
+    #平台证书路径
+    platformCertPath: /root/projects/fitness/cert/platformCert.pem
+    # 通知回调路径
+    notifyUrl: https://fitness.bytes-space.com/fitness/pad/wechat/notification

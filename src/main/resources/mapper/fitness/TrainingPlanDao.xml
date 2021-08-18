@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.TrainingPlanDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.TrainingPlanEntity" id="trainingPlanMap">
+        <result property="trainingPlanId" column="training_plan_id"/>
+        <result property="trainingPlanName" column="training_plan_name"/>
+        <result property="trainingPlanDescription" column="training_plan_description"/>
+        <result property="trainingPlanCoverImage" column="training_plan_cover_image"/>
+        <result property="goalId" column="goal_id"/>
+        <result property="goalName" column="goal_name"/>
+        <result property="price" column="price"/>
+        <result property="favorablePrice" column="favorable_price"/>
+        <result property="trainingType" column="training_type"/>
+        <result property="totalClass" column="total_class"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.TrainingPlanWithPeriodsDto" id="trainingPlanWithDetailMap">
+        <result property="trainingPlanId" column="training_plan_id"/>
+        <result property="trainingPlanName" column="training_plan_name"/>
+        <result property="trainingPlanDescription" column="training_plan_description"/>
+        <result property="trainingPlanCoverImage" column="training_plan_cover_image"/>
+        <result property="goalId" column="goal_id"/>
+        <result property="price" column="price"/>
+        <result property="favorablePrice" column="favorable_price"/>
+        <result property="trainingType" column="training_type"/>
+        <result property="totalClass" column="total_class"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <collection property="trainingPeriods" ofType="com.phoenix.fitness.modules.fitness.dto.TrainingPeriodWithDaysDto"
+                    columnPrefix="p_">
+            <result property="trainingPeriodId" column="training_period_id"/>
+            <result property="periodIndex" column="period_index"/>
+            <result property="periodName" column="period_name"/>
+            <result property="periodDescription" column="period_description"/>
+            <result property="trainingPlanId" column="training_plan_id"/>
+            <result property="trainingDays" column="training_days"/>
+            <result property="oneCircleDays" column="one_circle_days"/>
+            <result property="circleRepeatTimes" column="circle_repeat_times"/>
+            <collection property="trainingPeriodDays"
+                        ofType="com.phoenix.fitness.modules.fitness.dto.TrainingPeriodDayWithClassDto" columnPrefix="pd_">
+                <result property="trainingPeriodDayId" column="training_period_day_id"/>
+                <result property="trainingPeriodId" column="training_period_id"/>
+                <result property="trainingPlanId" column="training_plan_id"/>
+                <result property="classId" column="class_id"/>
+                <result property="dayIndex" column="day_index"/>
+                <result property="isRest" column="is_rest"/>
+                <association property="classInfo" columnPrefix="ci_"
+                             javaType="com.phoenix.fitness.modules.fitness.entity.ClassInfoEntity">
+                    <result property="classId" column="class_id"/>
+                    <result property="className" column="class_name"/>
+                    <result property="classCoverImage" column="class_cover_image"/>
+                </association>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="selectPlanWithGoal" resultType="com.phoenix.fitness.modules.fitness.entity.TrainingPlanEntity">
+        select pl.*,
+        tg.goal_name as goal_name
+        from tb_training_plan pl
+        left join tb_training_goal tg
+        on pl.goal_id = tg.training_goal_id
+        where 1=1
+        <if test="searchValue != null and searchValue != ''">
+            and pl.training_plan_name like concat('%',#{searchValue},'%')
+        </if>
+        <if test="user !=null and user.gymId != null">
+            and pl.gym_id=#{user.gymId}
+        </if>
+        <if test="user !=null and user.partnerId != null">
+            and pl.partner_id=#{user.partnerId}
+        </if>
+        and pl.delete_flag=0
+        order by pl.create_time desc
+    </select>
+
+
+    <select id="selectPlanWithDetail" resultMap="trainingPlanWithDetailMap">
+        select pl.*,
+               p.training_period_id      as p_training_period_id,
+               p.training_plan_id        as p_training_plan_id,
+               p.period_index            as p_period_index,
+               p.period_name             as p_period_name,
+               p.period_description      as p_period_description,
+               p.training_days           as p_training_days,
+               p.one_circle_days         as p_one_circle_days,
+               p.circle_repeat_times     as p_circle_repeat_times,
+               pd.training_period_day_id as p_pd_training_period_day_id,
+               pd.training_period_id     as p_pd_training_period_id,
+               pd.training_plan_id       as p_pd_training_plan_id,
+               pd.class_id               as p_pd_class_id,
+               pd.day_index              as p_pd_day_index,
+               pd.is_rest                as p_pd_is_rest,
+               ci.class_id               as p_pd_ci_class_id,
+               ci.class_name             as p_pd_ci_class_name,
+               ci.class_cover_image      as p_pd_ci_class_cover_image
+        from tb_training_plan pl
+                 left join tb_training_period p
+                           on pl.training_plan_id = p.training_plan_id
+                 left join tb_training_period_day pd
+                           on p.training_period_id = pd.training_period_id
+                 left join tb_class_info ci
+                           on pd.class_id = ci.class_id
+        where pl.training_plan_id = #{id}
+        order by p.period_index asc, pd.day_index asc
+    </select>
+
+
+    <select id="selectPlanListWithDetail" resultMap="trainingPlanWithDetailMap">
+        select pl.*,
+        p.training_period_id as p_training_period_id,
+        p.training_plan_id as p_training_plan_id,
+        p.period_index as p_period_index,
+        p.period_name as p_period_name,
+        p.period_description as p_period_description,
+        p.training_days as p_training_days,
+        p.one_circle_days as p_one_circle_days,
+        p.circle_repeat_times as p_circle_repeat_times,
+        pd.training_period_day_id as p_pd_training_period_day_id,
+        pd.training_period_id as p_pd_training_period_id,
+        pd.training_plan_id as p_pd_training_plan_id,
+        pd.class_id as p_pd_class_id,
+        pd.day_index as p_pd_day_index,
+        pd.is_rest as p_pd_is_rest,
+        ci.class_id as p_pd_ci_class_id,
+        ci.class_name as p_pd_ci_class_name,
+        ci.class_cover_image as p_pd_ci_class_cover_image
+        from
+        tb_training_plan pl
+        left join tb_training_period p
+        on pl.training_plan_id=p.training_plan_id
+        left join tb_training_period_day pd
+        on p.training_period_id=pd.training_period_id
+        left join tb_class_info ci
+        on pd.class_id=ci.class_id
+        where pl.delete_flag=0
+        <if test="user!=null and user.gymId != null">
+            and pl.gym_id=#{user.gymId}
+        </if>
+        <if test="user!=null and user.partnerId != null">
+            and pl.partner_id=#{user.partnerId}
+        </if>
+        order by p.period_index asc,pd.day_index asc
+    </select>
+
+    <update id="deleteByDeleteFlag">
+        update tb_training_plan
+        set delete_flag=1
+        where training_plan_id = #{id}
+    </update>
+
+
+</mapper>

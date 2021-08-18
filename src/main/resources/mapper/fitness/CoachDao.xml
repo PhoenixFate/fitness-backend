@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.CoachDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.CoachEntity" id="coachMap">
+        <result property="coachId" column="coach_id"/>
+        <result property="coachName" column="coach_name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="username" column="username"/>
+        <result property="gender" column="gender"/>
+        <result property="email" column="email"/>
+        <result property="identityCard" column="identity_card"/>
+        <result property="birthday" column="birthday"/>
+        <result property="avatar" column="avatar"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.CoachDetailDto" id="coachMapWithTarget">
+        <result property="coachId" column="coach_id"/>
+        <result property="coachName" column="coach_name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="username" column="username"/>
+        <result property="gender" column="gender"/>
+        <result property="email" column="email"/>
+        <result property="identityCard" column="identity_card"/>
+        <result property="birthday" column="birthday"/>
+        <result property="avatar" column="avatar"/>
+        <result property="perClassPrice" column="per_class_price"/>
+        <result property="userId" column="user_id"/>
+        <collection property="coachTargetDetailList"
+                    ofType="com.phoenix.fitness.modules.fitness.dto.CoachDetailWithTargetDto"
+                    columnPrefix="ctd_">
+            <result property="targetId" column="target_id"/>
+            <result property="targetCoachRelationId" column="target_coach_relation_id"/>
+            <result property="targetName" column="target_name"/>
+            <result property="targetDescription" column="target_description"/>
+            <result property="targetType" column="target_type"/>
+            <result property="detailNumber" column="detail_number"/>
+            <result property="targetPeriodType" column="target_period_type"/>
+            <result property="startDate" column="start_date"/>
+            <result property="endDate" column="end_date"/>
+        </collection>
+        <collection property="gyms"
+                    ofType="com.phoenix.fitness.modules.fitness.entity.GymEntity"
+                    columnPrefix="g_">
+            <result property="gymId" column="gym_id"/>
+            <result property="gymName" column="gym_name"/>
+            <result property="gymImageUrl" column="gym_image_url"/>
+            <result property="city" column="city"/>
+            <result property="address" column="address"/>
+        </collection>
+    </resultMap>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.CoachWithGymDto" id="coachMapWithGym">
+        <result property="coachId" column="coach_id"/>
+        <result property="coachName" column="coach_name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="username" column="username"/>
+        <result property="gender" column="gender"/>
+        <result property="email" column="email"/>
+        <result property="identityCard" column="identity_card"/>
+        <result property="birthday" column="birthday"/>
+        <result property="avatar" column="avatar"/>
+        <result property="perClassPrice" column="per_class_price"/>
+        <result property="userId" column="user_id"/>
+        <collection property="gyms"
+                    ofType="com.phoenix.fitness.modules.fitness.entity.GymEntity"
+                    columnPrefix="g_">
+            <result property="gymId" column="gym_id"/>
+            <result property="gymName" column="gym_name"/>
+            <result property="gymImageUrl" column="gym_image_url"/>
+            <result property="city" column="city"/>
+            <result property="address" column="address"/>
+        </collection>
+    </resultMap>
+
+    <update id="deleteByDeleteFlag">
+        update tb_coach
+        set delete_flag=1
+        where tb_coach.coach_id = #{id}
+    </update>
+
+    <select id="selectDetailWithTarget" resultMap="coachMapWithTarget">
+        select c.*,
+               t.target_id                 as ctd_target_id,
+               t.target_type               as ctd_target_type,
+               t.target_name               as ctd_target_name,
+               tc.target_coach_relation_id as ctd_target_coach_relation_id,
+               t.target_description        as ctd_target_description,
+               t.target_period_type        as ctd_target_period_type,
+               t.start_date                as ctd_start_date,
+               t.end_date                  as ctd_end_date,
+               t.detail_number             as ctd_detail_number,
+               t.detail_number             as ctd_target_detail_number,
+               g.gym_id                    as g_gym_id,
+               g.gym_name                  as g_gym_name,
+               g.gym_image_url             as g_gym_image_url
+        from tb_coach c
+                 left join tb_target_coach_relation tc
+                           on c.coach_id = tc.coach_id
+                 left join tb_target t
+                           on t.target_id = tc.target_id
+                 left join tb_gym_coach_relation gcr
+                           on gcr.coach_id = c.coach_id
+                 left join tb_gym g
+                           on g.gym_id = gcr.gym_id
+        where c.coach_id = #{id}
+    </select>
+
+    <select id="selectListWithGym" resultMap="coachMapWithGym">
+        select c.*,
+        g.gym_id as g_gym_id,
+        g.gym_name as g_gym_name,
+        g.gym_image_url as g_gym_image_url
+        from tb_coach c
+        left join tb_gym_coach_relation gcr
+        on gcr.coach_id = c.coach_id
+        left join tb_gym g
+        on g.gym_id = gcr.gym_id
+        where c.delete_flag = 0
+        <if test="searchForm.coachName != null and searchForm.coachName != '' ">
+            and c.coach_name like concat('%',#{searchForm.coachName},'%')
+        </if>
+        <if test="searchForm.gender != null ">
+            and c.gender = #{searchForm.gender}
+        </if>
+        <if test="searchForm.mobile != null and searchForm.mobile != '' ">
+            and c.mobile like concat('%',#{searchForm.mobile},'%')
+        </if>
+        <if test="searchForm.gymId != null ">
+            and gcr.gym_id=#{searchForm.gymId}
+        </if>
+        order by c.create_time desc
+    </select>
+
+
+</mapper>

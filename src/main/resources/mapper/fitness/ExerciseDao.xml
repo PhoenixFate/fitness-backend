@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.ExerciseDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.ExerciseEntity" id="exerciseMap">
+        <result property="exerciseId" column="exercise_id"/>
+        <result property="exerciseName" column="exercise_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.ExerciseWithActionSetDto" id="exerciseWithActionSetMap">
+        <result property="exerciseId" column="exercise_id"/>
+        <result property="exerciseName" column="exercise_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <collection property="actionSets" ofType="com.phoenix.fitness.modules.fitness.dto.ActionSetInExerciseDto"
+                    columnPrefix="as_">
+            <result property="actionSetId" column="action_set_id"/>
+            <result property="exerciseId" column="exercise_id"/>
+            <result property="actionSetType" column="action_set_type"/>
+            <result property="setNumber" column="set_number"/>
+            <result property="reduceSetNumber" column="reduce_set_number"/>
+            <result property="restInternal" column="rest_internal"/>
+            <result property="sort" column="sort"/>
+            <collection property="actions" ofType="com.phoenix.fitness.modules.fitness.entity.ActionSetActionEntity"
+                        columnPrefix="a_">
+                <result property="actionSetActionId" column="action_set_action_id"/>
+                <result property="actionId" column="action_id"/>
+                <result property="actionSetId" column="action_set_id"/>
+                <result property="exerciseId" column="exercise_id"/>
+                <result property="count" column="count"/>
+                <result property="weight" column="weight"/>
+                <result property="actionName" column="action_name"/>
+                <result property="containWeight" column="contain_weight"/>
+                <result property="unit" column="unit"/>
+                <result property="time" column="time"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="selectExerciseWithActionSet" resultMap="exerciseWithActionSetMap">
+        select e.*,
+               actionSet.action_set_id     as as_action_set_id,
+               actionSet.exercise_id       as as_exercise_id,
+               actionSet.action_set_type   as as_action_set_type,
+               actionSet.sort              as as_sort,
+               actionSet.set_number        as as_set_number,
+               actionSet.reduce_set_number as as_reduce_set_number,
+               actionSet.rest_internal     as as_rest_internal,
+               asa.action_set_action_id    as as_a_action_set_action_id,
+               asa.action_id               as as_a_action_id,
+               a.action_name               as as_a_action_name,
+               a.contain_weight            as as_a_contain_weight,
+               a.unit                      as as_a_unit,
+               asa.action_set_id           as as_a_action_set_id,
+               asa.exercise_id             as as_a_exercise_id,
+               asa.count                   as as_a_count,
+               asa.weight                  as as_a_weight,
+               asa.time                    as as_a_time
+        from tb_exercise e
+                 left join tb_action_set actionSet
+                           on e.exercise_id = actionSet.exercise_id
+                 left join tb_action_set_action asa
+                           on asa.action_set_id = actionSet.action_set_id
+                 left join tb_action a
+                           on a.action_id = asa.action_id
+        where e.exercise_id = #{id}
+        order by actionSet.sort, asa.sort
+    </select>
+
+
+    <update id="deleteByDeleteFlag">
+        update tb_exercise
+        set delete_flag=1
+        where tb_exercise.exercise_id = #{id}
+    </update>
+
+
+    <select id="selectListWithDetail" resultMap="exerciseWithActionSetMap">
+        select e.*,
+        actionSet.action_set_id as as_action_set_id,
+        actionSet.exercise_id as as_exercise_id,
+        actionSet.action_set_type as as_action_set_type,
+        actionSet.sort as as_sort,
+        actionSet.set_number        as as_set_number,
+        actionSet.reduce_set_number as as_reduce_set_number,
+        actionSet.rest_internal     as as_rest_internal,
+        asa.action_set_action_id as as_a_action_set_action_id,
+        asa.action_id as as_a_action_id,
+        a.action_name as as_a_action_name,
+        a.contain_weight as as_a_contain_weight,
+        a.unit as as_a_unit,
+        asa.action_set_id as as_a_action_set_id,
+        asa.exercise_id as as_a_exercise_id,
+        asa.count as as_a_count,
+        asa.weight as as_a_weight,
+        asa.time as as_a_time
+        from tb_exercise e
+        left join tb_action_set actionSet
+        on e.exercise_id = actionSet.exercise_id
+        left join tb_action_set_action asa
+        on asa.action_set_id = actionSet.action_set_id
+        left join tb_action a
+        on a.action_id = asa.action_id
+        where e.delete_flag = 0
+        <if test="user != null and user.gymId != null">
+            and e.gym_id=#{user.gymId}
+        </if>
+        <if test="user !=null and user.partnerId != null">
+            and e.partner_id=#{user.partnerId}
+        </if>
+        order by e.create_time desc, actionSet.sort asc, asa.sort
+    </select>
+
+</mapper>

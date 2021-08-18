@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.PhysiqueExamPostureDao">
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.PhysiqueExamPostureEntity"
+               id="physiqueExamPostureEntityMap">
+        <result property="id" column="id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="score" column="score"/>
+        <result property="evaluation" column="evaluation"/>
+        <result property="unevenShouldersId" column="uneven_shoulders_id"/>
+        <result property="legTypeId" column="leg_type_id"/>
+        <result property="neckForwardId" column="neck_forward_id"/>
+        <result property="roundShoulderedHunchbackId" column="round_shouldered_hunchback_id"/>
+        <result property="pelvicObliquityId" column="pelvic_obliquity_id"/>
+        <result property="pelvisFlankId" column="pelvis_flank_id"/>
+        <result property="kneeOverextensionId" column="knee_overextension_id"/>
+        <result property="cervicalScoliosisId" column="cervical_scoliosis_id"/>
+        <result property="scoliosisId" column="scoliosis_id"/>
+        <result property="sourceImageId" column="source_image_id"/>
+        <result property="spineImageId" column="spine_image_id"/>
+        <result property="examTime" column="exam_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="modify_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.PostureRecord"
+               id="youjiuPostureMap">
+        <result property="score" column="score"/>
+        <result property="evaluation" column="evaluation"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="examTime" column="exam_time"/>
+        <result property="gymId" column="gym_id"/>
+        <association property="unevenShoulders" columnPrefix="u_"
+                     javaType="com.phoenix.fitness.modules.pad.service.impl.youjiu.PostureDetailValue">
+            <result property="name" column="name"/>
+            <result property="interval" column="interval"/>
+            <result property="grades" column="grades"/>
+            <result property="value" column="value"/>
+            <result property="unit" column="unit"/>
+            <result property="grade" column="grade"/>
+            <result property="describe" column="describe"/>
+            <result property="markFigure" column="mark_figure"/>
+            <result property="markFigureFocus" column="mark_figure_focus"/>
+        </association>
+        <association property="legType" columnPrefix="l_"
+                     javaType="com.phoenix.fitness.modules.pad.service.impl.youjiu.PostureDetailValue">
+            <result property="name" column="name"/>
+            <result property="interval" column="interval"/>
+            <result property="grades" column="grades"/>
+            <result property="value" column="value"/>
+            <result property="unit" column="unit"/>
+            <result property="grade" column="grade"/>
+            <result property="describe" column="describe"/>
+            <result property="markFigure" column="mark_figure"/>
+            <result property="markFigureFocus" column="mark_figure_focus"/>
+        </association>
+
+        <association property="neckForward" columnPrefix="ne_"
+                     javaType="com.phoenix.fitness.modules.pad.service.impl.youjiu.PostureDetailValue">
+            <result property="name" column="name"/>
+            <result property="interval" column="interval"/>
+            <result property="grades" column="grades"/>
+            <result property="value" column="value"/>
+            <result property="unit" column="unit"/>
+            <result property="grade" column="grade"/>
+            <result property="describe" column="describe"/>
+            <result property="markFigure" column="mark_figure"/>
+            <result property="markFigureFocus" column="mark_figure_focus"/>
+        </association>
+        <association property="roundShoulderedHunchback" columnPrefix="ro_"
+                     javaType="com.phoenix.fitness.modules.pad.service.impl.youjiu.PostureDetailValue">
+            <result property="name" column="name"/>
+            <result property="interval" column="interval"/>
+            <result property="grades" column="grades"/>
+            <result property="value" column="value"/>
+            <result property="unit" column="unit"/>
+            <result property="grade" column="grade"/>
+            <result property="describe" column="describe"/>
+            <result property="markFigure" column="mark_figure"/>
+            <result property="markFigureFocus" column="mark_figure_focus"/>
+        </association>
+
+        <association property="pelvicObliquity" columnPrefix="peo_"
+                     javaType="com.phoenix.fitness.modules.pad.service.impl.youjiu.PostureDetailValue">
+            <result property="name" column="name"/>
+            <result property="interval" column="interval"/>
+            <result property="grades" column="grades"/>
+            <result property="value" column="value"/>
+            <result property="unit" column="unit"/>
+            <result property="grade" column="grade"/>
+            <result property="describe" column="describe"/>
+            <result property="markFigure" column="mark_figure"/>
+            <result property="markFigureFocus" column="mark_figure_focus"/>
+        </association>
+        <association property="pelvisFlank" columnPrefix="pef_"
+                     javaType="com.phoenix.fitness.modules.pad.service.impl.youjiu.PostureDetailValue">
+            <result property="name" column="name"/>
+            <result property="interval" column="interval"/>
+            <result property="grades" column="grades"/>
+            <result property="value" column="value"/>
+            <result property="unit" column="unit"/>
+            <result property="grade" column="grade"/>
+            <result property="describe" column="describe"/>
+            <result property="markFigure" column="mark_figure"/>
+            <result property="markFigureFocus" column="mark_figure_focus"/>
+        </association>
+        <association property="kneeOverextension" columnPrefix="ko_"
+                     javaType="com.phoenix.fitness.modules.pad.service.impl.youjiu.PostureDetailValue">
+            <result property="name" column="name"/>
+            <result property="interval" column="interval"/>
+            <result property="grades" column="grades"/>
+            <result property="value" column="value"/>
+            <result property="unit" column="unit"/>
+            <result property="grade" column="grade"/>
+            <result property="describe" column="describe"/>
+            <result property="markFigure" column="mark_figure"/>
+            <result property="markFigureFocus" column="mark_figure_focus"/>
+        </association>
+        <association property="cervicalScoliosis" columnPrefix="ce_"
+                     javaType="com.phoenix.fitness.modules.pad.service.impl.youjiu.PostureDetailValue">
+            <result property="name" column="name"/>
+            <result property="interval" column="interval"/>
+            <result property="grades" column="grades"/>
+            <result property="value" column="value"/>
+            <result property="unit" column="unit"/>
+            <result property="grade" column="grade"/>
+            <result property="describe" column="describe"/>
+            <result property="markFigure" column="mark_figure"/>
+            <result property="markFigureFocus" column="mark_figure_focus"/>
+        </association>
+        <association property="scoliosis" columnPrefix="sc_"
+                     javaType="com.phoenix.fitness.modules.pad.service.impl.youjiu.PostureDetailValue">
+            <result property="name" column="name"/>
+            <result property="interval" column="interval"/>
+            <result property="grades" column="grades"/>
+            <result property="value" column="value"/>
+            <result property="unit" column="unit"/>
+            <result property="grade" column="grade"/>
+            <result property="describe" column="describe"/>
+            <result property="markFigure" column="mark_figure"/>
+            <result property="markFigureFocus" column="mark_figure_focus"/>
+        </association>
+        <association property="sourceImage" columnPrefix="soi_"
+                     javaType="com.phoenix.fitness.modules.pad.service.impl.youjiu.PostureSide">
+            <result property="front" column="front"/>
+            <result property="left" column="left"/>
+            <result property="back" column="back"/>
+        </association>
+        <association property="spineImage" columnPrefix="spi_"
+                     javaType="com.phoenix.fitness.modules.pad.service.impl.youjiu.PostureSide">
+            <result property="front" column="front"/>
+            <result property="left" column="left"/>
+            <result property="back" column="back"/>
+        </association>
+    </resultMap>
+
+    <select id="findCustomerPostureReport" resultMap="youjiuPostureMap">
+        select
+        pep.score as score,
+        pep.evaluation as evaluation,
+        pep.gym_id as gym_id,
+        pep.customer_id as customer_id,
+        pep.exam_time as exam_time,
+        u.name as u_name,
+        u.value_interval as u_interval,
+        u.grades as u_grades,
+        u.value as u_value,
+        u.unit as u_unit,
+        u.grade as u_grade,
+        u.describe_val as u_describe,
+        u.mark_figure as u_mark_figure,
+        u.mark_figure_focus as u_mark_figure_focus,
+        l.name as l_name,
+        l.value_interval as l_interval,
+        l.grades as l_grades,
+        l.value as l_value,
+        l.unit as l_unit,
+        l.grade as l_grade,
+        l.describe_val as l_describe,
+        l.mark_figure as l_mark_figure,
+        l.mark_figure_focus as l_mark_figure_focus,
+        ne.name as ne_name,
+        ne.value_interval as ne_interval,
+        ne.grades as ne_grades,
+        ne.value as ne_value,
+        ne.unit as ne_unit,
+        ne.grade as ne_grade,
+        ne.describe_val as ne_describe,
+        ne.mark_figure as ne_mark_figure,
+        ne.mark_figure_focus as ne_mark_figure_focus,
+        ro.name as ro_name,
+        ro.value_interval as ro_interval,
+        ro.grades as ro_grades,
+        ro.value as ro_value,
+        ro.unit as ro_unit,
+        ro.grade as ro_grade,
+        ro.describe_val as ro_describe,
+        ro.mark_figure as ro_mark_figure,
+        ro.mark_figure_focus as ro_mark_figure_focus,
+        peo.name as peo_name,
+        peo.value_interval as peo_interval,
+        peo.grades as peo_grades,
+        peo.value as peo_value,
+        peo.unit as peo_unit,
+        peo.grade as peo_grade,
+        peo.describe_val as peo_describe,
+        peo.mark_figure as peo_mark_figure,
+        peo.mark_figure_focus as peo_mark_figure_focus,
+        pef.name as pef_name,
+        pef.value_interval as pef_interval,
+        pef.grades as pef_grades,
+        pef.value as pef_value,
+        pef.unit as pef_unit,
+        pef.grade as pef_grade,
+        pef.describe_val as pef_describe,
+        pef.mark_figure as pef_mark_figure,
+        pef.mark_figure_focus as pef_mark_figure_focus,
+        ko.name as ko_name,
+        ko.value_interval as ko_interval,
+        ko.grades as ko_grades,
+        ko.value as ko_value,
+        ko.unit as ko_unit,
+        ko.grade as ko_grade,
+        ko.describe_val as ko_describe,
+        ko.mark_figure as ko_mark_figure,
+        ko.mark_figure_focus as ko_mark_figure_focus,
+        ce.name as ce_name,
+        ce.value_interval as ce_interval,
+        ce.grades as ce_grades,
+        ce.value as ce_value,
+        ce.unit as ce_unit,
+        ce.grade as ce_grade,
+        ce.describe_val as ce_describe,
+        ce.mark_figure as ce_mark_figure,
+        ce.mark_figure_focus as ce_mark_figure_focus,
+        sc.name as sc_name,
+        sc.value_interval as sc_interval,
+        sc.grades as sc_grades,
+        sc.value as sc_value,
+        sc.unit as sc_unit,
+        sc.grade as sc_grade,
+        sc.describe_val as sc_describe,
+        sc.mark_figure as sc_mark_figure,
+        sc.mark_figure_focus as sc_mark_figure_focus,
+        soi.back as soi_back,
+        soi.left_image as soi_left,
+        soi.front as soi_front,
+        spi.back as spi_back,
+        spi.left_image as spi_left,
+        spi.front as spi_front
+
+
+        from physique_exam_posture pep
+        left join `coach-app`.physique_exam_posture_item u
+        on u.posture_exam_id = pep.id and u.id = pep.uneven_shoulders_id
+        left join `coach-app`.physique_exam_posture_item l
+        on l.posture_exam_id = pep.id and l.id = pep.leg_type_id
+        left join `coach-app`.physique_exam_posture_item ne
+        on ne.posture_exam_id = pep.id and ne.id = pep.neck_forward_id
+        left join `coach-app`.physique_exam_posture_item ro
+        on ro.posture_exam_id = pep.id and ro.id = pep.round_shouldered_hunchback_id
+        left join `coach-app`.physique_exam_posture_item peo
+        on peo.posture_exam_id = pep.id and peo.id = pep.pelvic_obliquity_id
+        left join `coach-app`.physique_exam_posture_item pef
+        on pef.posture_exam_id = pep.id and pef.id = pep.pelvis_flank_id
+        left join `coach-app`.physique_exam_posture_item ko
+        on ko.posture_exam_id = pep.id and ko.id = pep.knee_overextension_id
+        left join `coach-app`.physique_exam_posture_item ce
+        on ce.posture_exam_id = pep.id and ce.id = pep.cervical_scoliosis_id
+        left join `coach-app`.physique_exam_posture_item sc
+        on sc.posture_exam_id = pep.id and sc.id = pep.scoliosis_id
+        left join `coach-app`.physique_exam_posture_image soi
+        on soi.posture_exam_id = pep.id and soi.id = pep.source_image_id
+        left join `coach-app`.physique_exam_posture_image spi
+        on spi.posture_exam_id = pep.id and spi.id = pep.spine_image_id
+        <include refid="postQueryParam"/>
+        ORDER BY pep.`exam_time` DESC
+        <if test="latest != null">
+            LIMIT #{latest}
+        </if>
+    </select>
+
+    <sql id="postQueryParam">
+        <where>
+            <if test="customerId !=null">
+                pep.customer_id = #{customerId}
+            </if>
+            <if test="startAt != null">
+                <![CDATA[
+            AND pep.`exam_time` >= #{startAt}
+            ]]>
+            </if>
+            <if test="endAt != null">
+                <![CDATA[
+            AND pep.`exam_time` <= #{endAt}
+            ]]>
+            </if>
+        </where>
+
+    </sql>
+</mapper>

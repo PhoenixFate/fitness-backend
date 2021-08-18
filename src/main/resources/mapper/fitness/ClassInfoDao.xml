@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.ClassInfoDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.ClassInfoEntity" id="classInfoMap">
+        <result property="classId" column="class_id"/>
+        <result property="className" column="class_name"/>
+        <result property="classCoverImage" column="class_cover_image"/>
+        <result property="duration" column="duration"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.ClassInfoWithExercisesDto" id="classInfoMapWithDetail">
+        <result property="classId" column="class_id"/>
+        <result property="className" column="class_name"/>
+        <result property="classCoverImage" column="class_cover_image"/>
+        <result property="duration" column="duration"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <collection property="exercises" ofType="com.phoenix.fitness.modules.fitness.dto.ExerciseWithActionSetClassDto"
+                    columnPrefix="e_">
+            <result property="exerciseId" column="exercise_id"/>
+            <result property="exerciseName" column="exercise_name"/>
+            <collection property="actionSets" ofType="com.phoenix.fitness.modules.fitness.dto.ActionSetInClassDto"
+                        columnPrefix="as_">
+                <result property="actionSetClassId" column="action_set_class_id"/>
+                <result property="exerciseId" column="exercise_id"/>
+                <result property="classId" column="class_id"/>
+                <result property="actionSetType" column="action_set_type"/>
+                <result property="setNumber" column="set_number"/>
+                <result property="reduceSetNumber" column="reduce_set_number"/>
+                <result property="restInternal" column="rest_internal"/>
+                <result property="sort" column="sort"/>
+                <collection property="actions"
+                            ofType="com.phoenix.fitness.modules.fitness.entity.ActionSetActionInClassEntity"
+                            columnPrefix="a_">
+                    <result property="actionSetActionInClassId" column="action_set_action_in_class_id"/>
+                    <result property="actionId" column="action_id"/>
+                    <result property="actionSetId" column="action_set_id"/>
+                    <result property="actionName" column="action_name"/>
+                    <result property="containWeight" column="contain_weight"/>
+                    <result property="unit" column="unit"/>
+                    <result property="exerciseId" column="exercise_id"/>
+                    <result property="classId" column="class_id"/>
+                    <result property="count" column="count"/>
+                    <result property="weight" column="weight"/>
+                    <result property="time" column="time"/>
+                    <result property="actionVideoUrl" column="action_video_url"/>
+                </collection>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="selectClassInfoWithDetail" resultMap="classInfoMapWithDetail">
+        select c.*,
+               e.exercise_id                     as e_exercise_id,
+               e.exercise_name                   as e_exercise_name,
+               actionSet.action_set_class_id     as e_as_action_set_class_id,
+               actionSet.exercise_id             as e_as_exercise_id,
+               actionSet.class_id                as e_as_class_id,
+               actionSet.action_set_type         as e_as_action_set_type,
+               actionSet.set_number              as e_as_set_number,
+               actionSet.reduce_set_number       as e_as_reduce_set_number,
+               actionSet.rest_internal           as e_as_rest_internal,
+               actionSet.sort                    as e_as_sort,
+               a.action_name                     as e_as_a_action_name,
+               a.contain_weight                  as e_as_a_contain_weight,
+               a.unit                            as e_as_a_unit,
+               asa.action_set_action_in_class_id as e_as_a_action_set_action_in_class_id,
+               asa.action_id                     as e_as_a_action_id,
+               asa.action_set_class_id           as e_as_a_action_set_class_id,
+               asa.exercise_id                   as e_as_a_exercise_id,
+               asa.class_id                      as e_as_a_class_id,
+               asa.count                         as e_as_a_count,
+               asa.weight                        as e_as_a_weight,
+               asa.time                          as e_as_a_time
+        from tb_class_info c
+                 left JOIN tb_class_exercise_relation cer
+                           on c.class_id = cer.class_id
+                 left join tb_exercise e
+                           on cer.exercise_id = e.exercise_id
+                 left join tb_action_set_class actionSet
+                           on cer.exercise_id = actionSet.exercise_id
+                               and actionSet.class_id = #{id}
+                 left join tb_action_set_action_in_class asa
+                           on actionSet.action_set_class_id = asa.action_set_class_id
+                               and asa.class_id = c.class_id
+                 left join tb_action a
+                           on asa.action_id = a.action_id
+        where c.class_id = #{id}
+        order by cer.sort, actionSet.sort asc, asa.sort
+    </select>
+
+    <select id="selectClassInfoListWithDetail" resultMap="classInfoMapWithDetail">
+        select c.*,
+        e.exercise_id as e_exercise_id,
+        e.exercise_name as e_exercise_name,
+        actionSet.action_set_class_id as e_as_action_class_set_id,
+        actionSet.exercise_id as e_as_exercise_id,
+        actionSet.class_id as e_as_class_id,
+        actionSet.action_set_type as e_as_action_set_type,
+        actionSet.set_number as e_as_set_number,
+        actionSet.reduce_set_number as e_as_reduce_set_number,
+        actionSet.rest_internal as e_as_rest_internal,
+        actionSet.sort as e_as_sort,
+        a.action_name as e_as_a_action_name,
+        a.contain_weight as e_as_a_contain_weight,
+        a.unit as e_as_a_unit,
+        a.action_video_url as e_as_a_action_video_url,
+        asa.action_set_action_in_class_id as e_as_a_action_set_action_in_class_id,
+        asa.action_id as e_as_a_action_id,
+        asa.action_set_class_id as e_as_a_action_set_class_id,
+        asa.exercise_id as e_as_a_exercise_id,
+        asa.class_id as e_as_a_class_id,
+        asa.count as e_as_a_count,
+        asa.weight as e_as_a_weight,
+        asa.time as e_as_a_time
+        from tb_class_info c
+        left JOIN tb_class_exercise_relation cer
+        on c.class_id=cer.class_id
+        left join tb_exercise e
+        on cer.exercise_id=e.exercise_id
+        left join tb_action_set_class actionSet
+        on cer.exercise_id=actionSet.exercise_id
+        and actionSet.class_id=c.class_id
+        left join tb_action_set_action_in_class asa
+        on actionSet.action_set_class_id=asa.action_set_class_id
+        and asa.class_id=c.class_id
+        left join tb_action a
+        on asa.action_id=a.action_id
+        where c.delete_flag=0
+        <if test="user != null and user.gymId != null">
+            and c.gym_id=#{user.gymId}
+        </if>
+        <if test="user!=null and user.partnerId != null">
+            and c.partner_id=#{user.partnerId}
+        </if>
+        order by c.create_time desc, cer.sort,actionSet.sort asc,asa.sort
+    </select>
+
+    <update id="deleteByDeleteFlag">
+        update tb_class_info
+        set delete_flag=1
+        where class_id = #{id}
+    </update>
+
+</mapper>

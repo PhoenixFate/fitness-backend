@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.CustomerVipDurationDao">
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.CustomerVipDurationEntity" id="customerVipDurationMap">
+        <result property="customerVipDurationId" column="customer_vip_duration_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="coachId" column="coach_id"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="vipCardBigType" column="vip_card_big_type"/>
+        <result property="days" column="days"/>
+        <result property="leftDays" column="left_days"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="vipCardId" column="vip_card_id"/>
+        <result property="totalTimes" column="total_times"/>
+        <result property="usedTimes" column="used_times"/>
+        <association property="vipCard" columnPrefix="vc_"
+                     javaType="com.phoenix.fitness.modules.fitness.entity.VipCardEntity">
+            <result property="vipCardId" column="vip_card_id"/>
+            <result property="vipCardType" column="vip_card_type"/>
+            <result property="vipCardName" column="vip_card_name"/>
+        </association>
+    </resultMap>
+
+    <select id="selectCustomerVipDurationList" resultMap="customerVipDurationMap">
+        select cvd.*,
+               vc.vip_card_id       as vc_vip_card_id,
+               vc.vip_card_type     as vc_vip_card_type,
+               vc.vip_card_big_type as vc_vip_card_big_type,
+               vc.price             as vc_price,
+               vc.vip_card_name     as vc_vip_card_name
+        from tb_customer_vip_duration cvd
+                 left join tb_vip_card vc
+                           on cvd.vip_card_id = vc.vip_card_id
+        where cvd.customer_id = #{customerId}
+        order by create_time
+    </select>
+
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.CustomerPlanDao">
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.CustomerPlanWithAllDto" id="customerPlanMap">
+        <result property="customerPlanId" column="customer_plan_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="trainingPlanId" column="training_plan_id"/>
+        <result property="coachId" column="coach_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="startDate" column="start_date"/>
+        <result property="isLatest" column="is_latest"/>
+        <result property="coachName" column="coach_name"/>
+        <association property="trainingPlan" columnPrefix="tp_"
+                     javaType="com.phoenix.fitness.modules.fitness.entity.TrainingPlanEntity">
+            <result property="trainingPlanId" column="training_plan_id"/>
+            <result property="trainingPlanName" column="training_plan_name"/>
+            <result property="trainingPlanDescription" column="training_plan_description"/>
+            <result property="trainingPlanCoverImage" column="training_plan_cover_image"/>
+            <result property="goalId" column="goal_id"/>
+            <result property="price" column="price"/>
+            <result property="favorablePrice" column="favorable_price"/>
+        </association>
+        <collection property="customerPlanPeriods"
+                    ofType="com.phoenix.fitness.modules.fitness.entity.CustomerPlanPeriodEntity"
+                    columnPrefix="cpp_">
+            <result property="customerPlanPeriodId" column="customer_plan_period_id"/>
+            <result property="periodIndex" column="period_index"/>
+            <result property="periodName" column="period_name"/>
+            <collection property="customerPlanWeeks"
+                        ofType="com.phoenix.fitness.modules.fitness.entity.CustomerPlanWeekEntity"
+                        columnPrefix="cpw_">
+                <result property="customerPlanWeekId" column="customer_plan_week_id"/>
+                <result property="weekIndex" column="week_index"/>
+                <collection property="customerPlanDays"
+                            ofType="com.phoenix.fitness.modules.fitness.dto.CustomerPlanDayWithClassInfoDto"
+                            columnPrefix="cpd_">
+                    <result property="customerPlanDayId" column="customer_plan_day_id"/>
+                    <result property="dayOfWeek" column="day_of_week"/>
+                    <result property="detailDate" column="detail_date"/>
+                    <result property="classId" column="class_id"/>
+                    <result property="status" column="status"/>
+                    <result property="isActive" column="is_active"/>
+                    <result property="isPay" column="is_pay"/>
+                    <result property="isRest" column="is_rest"/>
+                    <result property="coachId" column="coach_id"/>
+                    <result property="startTime" column="start_time"/>
+                    <result property="endTime" column="end_time"/>
+                    <result property="customerIsSure" column="customer_is_sure"/>
+                    <result property="customerCommentScore" column="customer_comment_score"/>
+                    <result property="customerCommentContent" column="customer_comment_content"/>
+                </collection>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="selectCustomerPlanList" resultMap="customerPlanMap">
+        select cp.*,
+               co.coach_name,
+               tp.training_plan_id          as tp_training_plan_id,
+               tp.training_plan_cover_image as tp_training_plan_cover_image,
+               tp.goal_id                   as tp_goal_id,
+               tp.training_plan_description as tp_training_plan_description,
+               tp.training_plan_name        as tp_training_plan_name,
+               tp.price                     as tp_price,
+               tp.favorable_price           as tp_favorable_price,
+               cpp.customer_plan_period_id  as cpp_customer_plan_period_id,
+               cpp.period_index             as cpp_period_index,
+               cpp.period_name              as cpp_period_name,
+               cpw.customer_plan_week_id    as cpp_cpw_customer_plan_week_id,
+               cpw.week_index               as cpp_cpw_week_index,
+               cpd.customer_plan_day_id     as cpp_cpw_cpd_customer_plan_day_id,
+               cpd.day_of_week              as cpp_cpw_cpd_day_of_week,
+               cpd.class_id                 as cpp_cpw_cpd_class_id,
+               cpd.detail_date              as cpp_cpw_cpd_detail_date,
+               cpd.status                   as cpp_cpw_cpd_status,
+               cpd.is_active                as cpp_cpw_cpd_is_active,
+               cpd.is_pay                   as cpp_cpw_cpd_is_pay,
+               cpd.is_rest                  as cpp_cpw_cpd_is_rest,
+               cpd.coach_id                 as cpp_cpw_cpd_coach_id,
+               cpd.start_time               as cpp_cpw_cpd_start_time,
+               cpd.end_time                 as cpp_cpw_cpd_end_time,
+               cpd.customer_is_sure         as cpp_cpw_cpd_customer_is_sure,
+               cpd.customer_comment_score   as cpp_cpw_cpd_customer_comment_score,
+               cpd.customer_comment_content as cpp_cpw_cpd_customer_comment_content
+        from tb_customer_plan cp
+                 left join tb_training_plan tp
+                           on cp.training_plan_id = tp.training_plan_id
+                 left join tb_customer_plan_period cpp
+                           on cpp.customer_plan_id = cp.customer_plan_id
+                 left join tb_customer_plan_week cpw
+                           on cpw.customer_plan_period_id = cpp.customer_plan_period_id
+                 left join tb_customer_plan_day cpd
+                           on cpd.customer_plan_week_id = cpw.customer_plan_week_id
+                 left join tb_coach co on co.coach_id = cp.coach_id
+        where cp.customer_id = #{id}
+        order by cp.create_time desc, cpp.period_index, cpw.week_index, cpd.detail_date
+    </select>
+
+
+</mapper>

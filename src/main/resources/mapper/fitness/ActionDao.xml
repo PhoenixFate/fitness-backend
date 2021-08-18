@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.ActionDao">
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.ActionEntity" id="actionMap">
+        <result property="actionId" column="action_id"/>
+        <result property="actionName" column="action_name"/>
+        <result property="actionTypeId" column="action_type_id"/>
+        <result property="actionDescription" column="action_description"/>
+        <result property="containWeight" column="contain_weight"/>
+        <result property="unit" column="unit"/>
+        <result property="actionVideoUrl" column="action_video_url"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.ActionWithActionTypeDto" id="actionMapWithActionType">
+        <result property="actionId" column="action_id"/>
+        <result property="actionName" column="action_name"/>
+        <result property="actionTypeId" column="action_type_id"/>
+        <result property="actionDescription" column="action_description"/>
+        <result property="containWeight" column="contain_weight"/>
+        <result property="unit" column="unit"/>
+        <result property="actionVideoUrl" column="action_video_url"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <association property="actionType" columnPrefix="at_"
+                     javaType="com.phoenix.fitness.modules.fitness.entity.ActionTypeEntity">
+            <result property="actionTypeId" column="action_type_id"/>
+            <result property="actionTypeName" column="action_type_name"/>
+            <result property="actionTypeImageUrl" column="action_type_image_url"/>
+        </association>
+    </resultMap>
+
+    <select id="selectActionWithActionType" resultMap="actionMapWithActionType">
+        select a.*,
+        t.action_type_id as at_action_type_id,
+        t.action_type_name as at_action_type_name,
+        t.action_type_image_url as at_action_type_image_url
+        from tb_action a
+        left join tb_action_type t
+        on a.action_type_id = t.action_type_id
+        where 1=1
+        <if test="searchForm.actionName != null and searchForm.actionName != ''">
+            and a.action_name like concat('%',#{searchForm.actionName},'%')
+        </if>
+        <if test="searchForm.actionTypeId != null">
+            and t.action_type_id=#{searchForm.actionTypeId}
+        </if>
+        <if test="searchForm.containWeight != null">
+            and a.contain_weight=#{searchForm.containWeight}
+        </if>
+        <if test="searchForm.unit != null">
+            and a.unit=#{searchForm.unit}
+        </if>
+        <if test="user!=null and user.gymId != null">
+            and a.gym_id=#{user.gymId}
+        </if>
+        <if test="user!=null and user.partnerId != null">
+            and a.partner_id=#{user.partnerId}
+        </if>
+        and a.delete_flag=0
+        order by create_time desc
+    </select>
+
+    <resultMap type="com.phoenix.fitness.modules.fitness.dto.ActionWithAllDto" id="actionMapWithAll">
+        <result property="actionId" column="action_id"/>
+        <result property="actionName" column="action_name"/>
+        <result property="actionTypeId" column="action_type_id"/>
+        <result property="actionDescription" column="action_description"/>
+        <result property="containWeight" column="contain_weight"/>
+        <result property="unit" column="unit"/>
+        <result property="actionVideoUrl" column="action_video_url"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <association property="actionType" columnPrefix="at_"
+                     javaType="com.phoenix.fitness.modules.fitness.entity.ActionTypeEntity">
+            <result property="actionTypeId" column="action_type_id"/>
+            <result property="actionTypeName" column="action_type_name"/>
+            <result property="actionTypeImageUrl" column="action_type_image_url"/>
+        </association>
+        <collection property="actionExamples" columnPrefix="example_" javaType="string">
+            <result property="actionExampleImage" column="action_example_image"/>
+        </collection>
+        <collection property="equipments" ofType="com.phoenix.fitness.modules.fitness.entity.EquipmentEntity"
+                    columnPrefix="eq_">
+            <result property="equipmentId" column="equipment_id"/>
+            <result property="equipmentName" column="equipment_name"/>
+            <result property="equipmentImageUrl" column="equipment_image_url"/>
+            <result property="sort" column="sort"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectActionWithAll" resultMap="actionMapWithAll">
+        select a.*,
+               at.action_type_id        as at_action_type_id,
+               at.action_type_name      as at_action_type_name,
+               at.action_type_image_url as at_action_type_image_url,
+               aex.action_example_image as example_action_example_image,
+               eq.equipment_id          as eq_equipment_id,
+               eq.equipment_name        as eq_equipment_name,
+               eq.equipment_image_url   as eq_equipment_image_url,
+               eq.sort                  as eq_sort
+        from tb_action a
+                 left join tb_action_type at
+                           on a.action_type_id = at.action_type_id
+                 left join tb_action_example aex
+                           on a.action_id = aex.action_id
+                 left join tb_action_equipment aeq
+                           on a.action_id = aeq.action_id
+                 left join tb_equipment eq
+                           on aeq.equipment_id = eq.equipment_id
+        where a.delete_flag = 0
+          and a.action_id = #{id}
+    </select>
+
+
+    <update id="deleteByDeleteFlag">
+        update tb_action
+        set delete_flag=1
+        where tb_action.action_id = #{id}
+    </update>
+
+</mapper>

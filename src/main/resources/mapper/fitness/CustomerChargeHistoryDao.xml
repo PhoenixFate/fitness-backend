@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.phoenix.fitness.modules.fitness.dao.CustomerChargeHistoryDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.phoenix.fitness.modules.fitness.entity.CustomerChargeHistoryEntity"
+               id="customerChargeHistoryMap">
+        <result property="customerChargeHistoryId" column="customer_charge_history_id"/>
+        <result property="coachId" column="coach_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="money" column="money"/>
+        <result property="chargeType" column="charge_type"/>
+        <result property="chargeDate" column="charge_date"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="gymId" column="gym_id"/>
+        <result property="partnerId" column="partner_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="deleteFlag" column="delete_flag"/>
+    </resultMap>
+
+    <select id="selectCustomerMoneyPeriod" resultType="com.phoenix.fitness.modules.fitness.dto.CustomerMoneyDto">
+        select charge_date          as detailDate,
+               ROUND(sum(money), 2) as customerMoney
+        from tb_customer_charge_history
+        where charge_date >= #{startDate}
+          and charge_date &lt;= #{endDate}
+        GROUP BY charge_date
+    </select>
+
+</mapper>
