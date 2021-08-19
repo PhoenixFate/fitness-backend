@@ -165,7 +165,21 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerDao, CustomerEntity
         if (customerList.size() > 0) {
             customer = customerList.get(0);
         } else {
-            return null;
+            // 判断是否获得手机号
+            if (StringUtils.isEmpty(weChatLoginForm.getMobile())) {
+                return null;
+            } else {
+                // 有手机号，并且账号不存在，新建账号
+                customer = new CustomerEntity();
+                customer.setName(weChatLoginForm.getNickName());
+                customer.setNickname(weChatLoginForm.getNickName());
+                customer.setGender(weChatLoginForm.getGender());
+                customer.setMobile(weChatLoginForm.getMobile());
+                customer.setAvatar(weChatLoginForm.getAvatarUrl());
+                customer.setOpenId(weChatLoginForm.getOpenId());
+                this.saveCustomerSpecial(customer, null);
+                return customer;
+            }
         }
         if (!StringUtils.isEmpty(weChatLoginForm.getAvatarUrl())) {
             if (StringUtils.isEmpty(customer.getAvatar())) {
@@ -565,7 +579,7 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerDao, CustomerEntity
         if (customerEntity == null) {
             throw new FitnessException(ExceptionEnum.CUSTOMER_NOT_FOUND);
         }
-        if (customerEntity.getCoachId().equals(coachChangeForm.getCoachId())) {
+        if (customerEntity.getCoachId()!=null && customerEntity.getCoachId().equals(coachChangeForm.getCoachId())) {
             throw new FitnessException(ExceptionEnum.COACH_EQUAL_BEFORE);
         }
         CoachEntity coachEntity = coachDao.selectById(coachChangeForm.getCoachId());

@@ -22,9 +22,6 @@ import com.phoenix.fitness.common.exception.FitnessException;
 import com.phoenix.fitness.common.utils.DateUtils;
 import com.phoenix.fitness.common.utils.PageUtils;
 import com.phoenix.fitness.modules.admin.form.CoachSearchForm;
-import com.phoenix.fitness.modules.fitness.dao.*;
-import com.phoenix.fitness.modules.fitness.dto.*;
-import com.phoenix.fitness.modules.fitness.entity.*;
 import com.phoenix.fitness.modules.fitness.service.CoachService;
 import com.phoenix.fitness.modules.fitness.service.GymCoachRelationService;
 import com.phoenix.fitness.modules.fitness.vo.CoachDateVO;
@@ -60,30 +57,6 @@ public class CoachServiceImpl extends ServiceImpl<CoachDao, CoachEntity> impleme
 
     @Override
     public PageUtils queryPage(CoachSearchForm coachSearchForm) {
-        // QueryWrapper<CoachEntity> coachEntityQueryWrapper = new QueryWrapper<>();
-        // if (!StringUtils.isEmpty(params.get("gender"))) {
-        //     Integer gender = Integer.parseInt((String) params.get("gender"));
-        //     if (gender != -1) {
-        //         coachEntityQueryWrapper.eq("gender", gender);
-        //     }
-        // }
-        // if (!StringUtils.isEmpty(params.get("mobile"))) {
-        //     String mobile = (String) params.get("mobile");
-        //     coachEntityQueryWrapper.like("mobile", mobile);
-        // }
-        // if (!StringUtils.isEmpty(params.get("coachName"))) {
-        //     String coachName = (String) params.get("coachName");
-        //     coachEntityQueryWrapper.like("coach_name", coachName);
-        // }
-        // if (!StringUtils.isEmpty(params.get("identityCard"))) {
-        //     String identityCard = (String) params.get("identityCard");
-        //     coachEntityQueryWrapper.like("identity_card", identityCard);
-        // }
-        // coachEntityQueryWrapper.eq("delete_flag", 0).orderByDesc("create_time");
-        // IPage<CoachEntity> page = this.page(
-        //         new Query<CoachEntity>().getPage(params),
-        //         coachEntityQueryWrapper
-        // );
         Page<CoachWithGymDto> pageParams = new Page<>(coachSearchForm.getPage(), coachSearchForm.getLimit());
         IPage<CoachWithGymDto> page = coachDao.selectListWithGym(pageParams, coachSearchForm);
         return new PageUtils(page);

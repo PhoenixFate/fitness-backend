@@ -35,7 +35,7 @@ public class WechatPayController {
      **/
     @PostMapping("preOrder")
     public R preOrder(@RequestBody @Valid OrderForm orderForm) throws Exception {
-        return R.ok().put("data", wechatService.newPreOrderMni(orderForm));
+        return R.ok().put("data", wechatService.newPreOrderMini(orderForm));
     }
 
 }

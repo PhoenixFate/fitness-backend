@@ -22,7 +22,6 @@ public class OrderForm {
     private Long customerId;
 
     @ApiModelProperty(value = "教练id")
-    @NotNull(message="教练id为空")
     private Long coachId;
 
     @ApiModelProperty(value = "订单类型")

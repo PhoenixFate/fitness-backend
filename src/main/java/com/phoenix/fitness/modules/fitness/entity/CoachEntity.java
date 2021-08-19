@@ -41,6 +41,10 @@ public class CoachEntity implements Serializable {
 	 */
 	private Integer gender;
 	/**
+	 * 训练方向
+	 */
+	private String exerciseDirection;
+	/**
 	 * 邮箱
 	 */
 	private String email;

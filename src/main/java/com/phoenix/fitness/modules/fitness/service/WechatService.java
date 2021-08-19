@@ -35,5 +35,5 @@ public interface WechatService {
      */
     String getPlatCertList() throws Exception;
 
-    Object newPreOrderMni(OrderForm orderForm) throws Exception;
+    Object newPreOrderMini(OrderForm orderForm) throws Exception;
 }

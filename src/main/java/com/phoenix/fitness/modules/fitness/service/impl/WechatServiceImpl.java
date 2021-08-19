@@ -199,7 +199,7 @@ public class WechatServiceImpl implements WechatService {
     }
 
     @Override
-    public Object newPreOrderMni(OrderForm orderForm) throws Exception {
+    public Object newPreOrderMini(OrderForm orderForm) throws Exception {
         CustomerEntity customer = customerDao.selectById(orderForm.getCustomerId());
         if(customer==null){
             throw new FitnessException(ExceptionEnum.CUSTOMER_NOT_FOUND);
