@@ -98,9 +98,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             throw new FitnessException(ExceptionEnum.ORDER_ITEM_IS_NULL);
         }
         CoachEntity coach = coachDao.selectById(orderForm.getCoachId());
-        if (coach == null || coach.getPerClassPrice() == null) {
-            throw new FitnessException(ExceptionEnum.OrderCoachIsInvalid);
-        }
+        // if (coach == null || coach.getPerClassPrice() == null) {
+        //     throw new FitnessException(ExceptionEnum.OrderCoachIsInvalid);
+        // }
         OrderEntity order = new OrderEntity();
         order.setOrderNumber(OrderNumberGenerator.getLongOrderNumber(null));
         order.setOrderType(orderForm.getOrderType());

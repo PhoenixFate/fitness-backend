@@ -10,6 +10,7 @@
         <result property="mobile" column="mobile"/>
         <result property="username" column="username"/>
         <result property="gender" column="gender"/>
+        <result property="exerciseDirection" column="exercise_direction"/>
         <result property="email" column="email"/>
         <result property="identityCard" column="identity_card"/>
         <result property="birthday" column="birthday"/>
@@ -26,6 +27,7 @@
         <result property="mobile" column="mobile"/>
         <result property="username" column="username"/>
         <result property="gender" column="gender"/>
+        <result property="exerciseDirection" column="exercise_direction"/>
         <result property="email" column="email"/>
         <result property="identityCard" column="identity_card"/>
         <result property="birthday" column="birthday"/>
@@ -62,6 +64,7 @@
         <result property="mobile" column="mobile"/>
         <result property="username" column="username"/>
         <result property="gender" column="gender"/>
+        <result property="exerciseDirection" column="exercise_direction"/>
         <result property="email" column="email"/>
         <result property="identityCard" column="identity_card"/>
         <result property="birthday" column="birthday"/>
