@@ -57,7 +57,8 @@ fitness:
     aliNotifyUrl: https://macbook.bytes-space.com/fitness/pad/alipay/aliNotify
   wechatpay:
     # 服务商/直连商户平台 公众号appid
-    appId: wxd8163cce30befaee
+    # 这里使用的是小程序的appId，也可以使用商户appId，公众号appId，但前提要和微信支付平台进行关联
+    appId: wx3c7e7046b6fe3dcf
     #服务商id/商户id
     mchId: 1609896630
     # 自定义api密钥

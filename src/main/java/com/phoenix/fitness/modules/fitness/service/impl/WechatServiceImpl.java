@@ -215,7 +215,7 @@ public class WechatServiceImpl implements WechatService {
                 .setAppid(wxPayV3Bean.getAppId())
                 .setMchid(wxPayV3Bean.getMchId())
                 .setDescription(order.getOrderDescription())
-                .setOut_trade_no(PayKit.generateStr())
+                .setOut_trade_no(order.getOrderNumber())
                 .setTime_expire(timeExpire)
                 .setAttach(order.getOrderDescription())
                 .setNotify_url(wxPayV3Bean.getNotifyUrl())
