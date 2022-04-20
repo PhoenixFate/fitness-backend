@@ -54,6 +54,8 @@ public class CoachDetailDto implements Serializable {
      */
     private String perClassPrice;
 
+    private String exerciseDirection;
+
     private Long userId;
 
     private List<CoachDetailWithTargetDto> coachTargetDetailList;
